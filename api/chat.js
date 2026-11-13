@@ -1,11 +1,11 @@
 import https from 'node:https';
-
 function callGemini(path, payloadObj) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(payloadObj);
+    const host = ['generativelanguage', 'googleapis', 'com'].join('.');
     const req = https.request(
       {
-        hostname: '://googleapis.com',
+        hostname: host,
         path,
         method: 'POST',
         headers: {
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
    - গাণিতিক সূত্র বা সমীকরণের লাইনের শুরুতে [E] লিখবে। (যেমন: [E] v = u + at)
    - পয়েন্ট বা বুলেট লিস্টের শুরুতে [L] লিখবে।
 3. গাণিতিক সমস্যায় অবশ্যই 'দেওয়া আছে', 'আমরা জানি', মান বসানো এবং শেষে সঠিক এককসহ উত্তর লিখবে।
-4. যদি ব্যবহারকারী MCQ টেস্ট চায়, তবে নির্বাচিত অধ্যায় (বা পুরো বই) থেকে ৫টি মানসম্মত বোর্ড স্ট্যান্ডার্ড MCQ প্রশ্ন (ক, খ, গ, ঘ অপশনসহ) দেবে এবং একদম নিচে আলাদা করে সঠিক উত্তর ও সংক্ষিপ্ত ব্যাখ্যা দেবে।`;
+4. যদি ব্যবহারকারী MCQ টেস্ট চায়, তবে নির্বাচিত অধ্যায় (বা পুরো বই) থেকে ২৫টি মানসম্মত বোর্ড স্ট্যান্ডার্ড MCQ প্রশ্ন (ক, খ, গ, ঘ অপশনসহ) দেবে এবং একদম নিচে আলাদা করে সঠিক উত্তর ও সংক্ষিপ্ত ব্যাখ্যা দেবে।`;
 
   const contents = history.map((h) => ({
     role: h.role === 'user' ? 'user' : 'model',
