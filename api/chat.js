@@ -1,3 +1,40 @@
+import https from 'node:https';
+
+function callGemini(path, payloadObj) {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify(payloadObj);
+    const req = https.request(
+      {
+        hostname: '://googleapis.com',
+        path,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload)
+        }
+      },
+      (res) => {
+        let raw = '';
+        res.on('data', (chunk) => (raw += chunk));
+        res.on('end', () => {
+          try {
+            resolve({
+              ok: res.statusCode >= 200 && res.statusCode < 300,
+              status: res.statusCode,
+              data: JSON.parse(raw)
+            });
+          } catch (e) {
+            reject(new Error('সার্ভার রেসপন্স পড়া যায়নি'));
+          }
+        });
+      }
+    );
+    req.on('error', reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -5,7 +42,7 @@ export default async function handler(req, res) {
   const apiKey = (process.env.GEMINI_API_KEY || '').replace(/[^a-zA-Z0-9_-]/g, '');
 
   if (!apiKey) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY সেট করা নেই। Vercel Settings-এ গিয়ে Key যোগ করো।' });
+    return res.status(500).json({ error: 'GEMINI_API_KEY সেট করা নেই। Vercel Environments-এ গিয়ে Key যোগ করো।' });
   }
 
   const systemInstruction = `তুমি বাংলাদেশের নবম-দশম (SSC) শ্রেণির NCTB পাঠ্যবই অনুসারে একজন অভিজ্ঞ ও বন্ধুত্বপূর্ণ পদার্থবিজ্ঞান শিক্ষক (PhysiAI)।
@@ -19,7 +56,7 @@ export default async function handler(req, res) {
 3. গাণিতিক সমস্যায় অবশ্যই 'দেওয়া আছে', 'আমরা জানি', মান বসানো এবং শেষে সঠিক এককসহ উত্তর লিখবে।
 4. যদি ব্যবহারকারী MCQ টেস্ট চায়, তবে নির্বাচিত অধ্যায় (বা পুরো বই) থেকে ৫টি মানসম্মত বোর্ড স্ট্যান্ডার্ড MCQ প্রশ্ন (ক, খ, গ, ঘ অপশনসহ) দেবে এবং একদম নিচে আলাদা করে সঠিক উত্তর ও সংক্ষিপ্ত ব্যাখ্যা দেবে।`;
 
-  const contents = history.map(h => ({
+  const contents = history.map((h) => ({
     role: h.role === 'user' ? 'user' : 'model',
     parts: [{ text: h.text }]
   }));
@@ -43,30 +80,23 @@ export default async function handler(req, res) {
 
   for (const model of models) {
     try {
-      const base = ['https:/', '://googleapis.com', 'v1beta', 'models', model + ':generateContent'].join('/');
-      const endpoint = base + '?key=' + apiKey;
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents
-        })
+      const apiPath = '/v1beta/models/' + model + ':generateContent?key=' + apiKey;
+      const result = await callGemini(apiPath, {
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents
       });
 
-      const data = await response.json();
-      if (!response.ok || data.error) {
-        lastError = data?.error?.message || `HTTP ${response.status}`;
+      if (!result.ok || result.data.error) {
+        lastError = result.data?.error?.message || `HTTP ${result.status}`;
         continue;
       }
 
-      const reply = data?.candidates?.at(0)?.content?.parts?.at(0)?.text;
+      const reply = result.data?.candidates?.at(0)?.content?.parts?.at(0)?.text;
       if (reply) {
         return res.status(200).json({ reply });
       }
     } catch (err) {
-      lastError = (err?.cause?.message || err.message) + ' (' + model + ')';
+      lastError = err.message;
     }
   }
 
