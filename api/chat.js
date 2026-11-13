@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { message, chapter, image, history = [], isMcq = false } = req.body;
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = (process.env.GEMINI_API_KEY || '').replace(/[^\x21-\x7E]/g, '').trim();
 
   if (!apiKey) {
     return res.status(500).json({ error: 'GEMINI_API_KEY সেট করা নেই। Vercel Settings-এ গিয়ে Key যোগ করো।' });
@@ -26,8 +26,8 @@ export default async function handler(req, res) {
 
   const userParts = [];
   if (image) {
-    const base64Data = image.split(',')[1];
-    const mimeType = image.split(';')[0].split(':')[1];
+    const base64Data = image.split(',').at(1);
+    const mimeType = image.split(';').at(0).split(':').at(1);
     userParts.push({ inlineData: { mimeType, data: base64Data } });
   }
 
@@ -38,26 +38,40 @@ export default async function handler(req, res) {
   userParts.push({ text: promptText });
   contents.push({ role: 'user', parts: userParts });
 
-  try {
-    const response = await fetch(
-      `https://googleapis.com{apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents
-        })
-      }
-    );
+  const models = ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash'];
+  let lastError = '';
 
-    const data = await response.json();
-    if (data.error) {
-      return res.status(500).json({ error: 'Gemini API Error: ' + data.error.message });
+  for (const model of models) {
+    try {
+      const response = await fetch(
+        `https://googleapis.com{model}:generateContent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+            contents
+          })
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok || data.error) {
+        lastError = data?.error?.message || `HTTP ${response.status}`;
+        continue;
+      }
+
+      const reply = data?.candidates?.at(0)?.content?.parts?.at(0)?.text;
+      if (reply) {
+        return res.status(200).json({ reply });
+      }
+    } catch (err) {
+      lastError = err?.cause?.message || err.message;
     }
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'দুঃখিত, উত্তর তৈরি করা যায়নি। আবার চেষ্টা করো।';
-    res.status(200).json({ reply });
-  } catch (err) {
-    res.status(500).json({ error: 'সার্ভার ত্রুটি: ' + err.message });
   }
+
+  return res.status(500).json({ error: 'API ত্রুটি: ' + lastError });
 }
