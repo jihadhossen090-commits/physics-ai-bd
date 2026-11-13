@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { message, chapter, image, history = [], isMcq = false } = req.body;
-  const apiKey = (process.env.GEMINI_API_KEY || '').replace(/[^\x21-\x7E]/g, '').trim();
+  const apiKey = (process.env.GEMINI_API_KEY || '').replace(/[^a-zA-Z0-9_-]/g, '');
 
   if (!apiKey) {
     return res.status(500).json({ error: 'GEMINI_API_KEY সেট করা নেই। Vercel Settings-এ গিয়ে Key যোগ করো।' });
@@ -38,25 +38,22 @@ export default async function handler(req, res) {
   userParts.push({ text: promptText });
   contents.push({ role: 'user', parts: userParts });
 
-  const models = ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash'];
+  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
   let lastError = '';
 
   for (const model of models) {
     try {
-      const response = await fetch(
-        `https://googleapis.com{model}:generateContent`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
-          },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemInstruction }] },
-            contents
-          })
-        }
-      );
+      const apiUrl = new URL(`https://googleapis.com{model}:generateContent`);
+      apiUrl.searchParams.set('key', apiKey);
+
+      const response = await fetch(apiUrl.toString(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          contents
+        })
+      });
 
       const data = await response.json();
       if (!response.ok || data.error) {
