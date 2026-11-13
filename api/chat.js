@@ -43,7 +43,8 @@ export default async function handler(req, res) {
 
   for (const model of models) {
     try {
-      const endpoint = 'https://googleapis.com' + model + ':generateContent?key=' + apiKey;
+      const base = ['https:/', '://googleapis.com', 'v1beta', 'models', model + ':generateContent'].join('/');
+      const endpoint = base + '?key=' + apiKey;
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ reply });
       }
     } catch (err) {
-      lastError = err?.cause?.message || err.message;
+      lastError = (err?.cause?.message || err.message) + ' (' + model + ')';
     }
   }
 
