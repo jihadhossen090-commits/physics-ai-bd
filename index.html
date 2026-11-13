@@ -38,8 +38,8 @@ header,main,.bar{position:relative;z-index:1}
 .tools button{min-height:38px;border:1px solid var(--brand);background:var(--bub);color:var(--ink);border-radius:10px;padding:0 14px;font:inherit;font-size:.88rem;cursor:pointer}
 .bar{border-top:1px solid var(--line);background:var(--card);padding:10px 12px}
 .sel,.row,.note,.pv{max-width:1100px;margin:0 auto}
-.sel{margin-bottom:8px;display:flex;gap:8px;align-items:center}
-select{flex:1;font:inherit;font-size:.88rem;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-width:0}
+.sel{margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select{flex:1;font:inherit;font-size:.88rem;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-width:140px}
 .fs{display:flex;gap:6px}
 .fs button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;font:inherit;min-width:44px;min-height:36px;cursor:pointer}
 .lnk{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--brand);border-radius:10px;color:var(--brand);background:var(--bub);cursor:pointer;font:inherit;font-size:.9rem;white-space:nowrap}
@@ -78,7 +78,7 @@ body.chatting .hero h1{font-size:1.15rem}
       <span>📷 ছবি দিয়ে প্রশ্ন</span>
       <span>🧮 গাণিতিক সমাধান</span>
       <span>📖 পাঠ্যবইয়ের সংযোগ</span>
-      <span>📝 MCQ টেস্ট দাও</span>
+      <span>📝 ২৫টি MCQ টেস্ট</span>
     </div>
   </div>
 </header>
@@ -101,6 +101,7 @@ body.chatting .hero h1{font-size:1.15rem}
       <button type="button" onclick="setFs(0.1)" title="লেখা বড় করো">A+</button>
     </div>
     <button type="button" class="lnk hot" onclick="startMcq()">📝 MCQ টেস্ট</button>
+    <button type="button" class="lnk" onclick="setApiKey()" id="keyBtn">🔑 API Key</button>
     <select id="chap">
       <option value="">অধ্যায় (ঐচ্ছিক)</option>
       <option>১ম অধ্যায়: ভৌত রাশি ও পরিমাপ</option>
