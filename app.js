@@ -2,6 +2,38 @@ let imgData = null;
 let fs = 1;
 const history = [];
 
+function getSavedKey() {
+  return (localStorage.getItem('gemini_api_key') || '').trim();
+}
+
+function setApiKey() {
+  const cur = getSavedKey();
+  const val = prompt('তোমার Google Gemini API Key (AIzaSy...) এখানে পেস্ট করো:', cur);
+  if (val !== null) {
+    const clean = val.trim();
+    if (clean) {
+      localStorage.setItem('gemini_api_key', clean);
+      alert('✅ API Key সেভ হয়েছে! এখন প্রশ্ন করতে পারো।');
+    } else {
+      localStorage.removeItem('gemini_api_key');
+    }
+    updateKeyBtn();
+  }
+}
+
+function updateKeyBtn() {
+  const btn = document.getElementById('keyBtn');
+  if (!btn) return;
+  if (getSavedKey()) {
+    btn.textContent = '✅ Key সেট আছে';
+    btn.style.borderColor = '#16a34a';
+  } else {
+    btn.textContent = '🔑 API Key';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', updateKeyBtn);
+
 function setFs(d) {
   fs = Math.min(1.5, Math.max(0.8, +(fs + d).toFixed(1)));
   document.documentElement.style.setProperty('--fs', fs);
@@ -97,7 +129,14 @@ async function sendMsg(isMcq = false) {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg, chapter: chap, image: curImg, history, isMcq })
+      body: JSON.stringify({
+        message: msg,
+        chapter: chap,
+        image: curImg,
+        history,
+        isMcq,
+        userApiKey: getSavedKey()
+      })
     });
     const data = await res.json();
     if (data.error) {
