@@ -8,7 +8,7 @@ function setFs(d) {
 }
 
 function handleImg(input) {
-  const file = input.files && input.files[0];
+  const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
@@ -117,6 +117,7 @@ function startMcq() {
   sendMsg(true);
 }
 
+// ভয়েস ইনপুট (বাংলা)
 let rec;
 function toggleMic() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
