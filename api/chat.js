@@ -1,4 +1,5 @@
 import https from 'node:https';
+
 function callGemini(path, payloadObj) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(payloadObj);
@@ -38,11 +39,11 @@ function callGemini(path, payloadObj) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { message, chapter, image, history = [], isMcq = false } = req.body;
-  const apiKey = (process.env.GEMINI_API_KEY || '').replace(/[^a-zA-Z0-9_-]/g, '');
+  const { message, chapter, image, history = [], isMcq = false, userApiKey = '' } = req.body;
+  const apiKey = (userApiKey || process.env.GEMINI_API_KEY || '').replace(/[^a-zA-Z0-9_-]/g, '');
 
   if (!apiKey) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY সেট করা নেই। Vercel Environments-এ গিয়ে Key যোগ করো।' });
+    return res.status(500).json({ error: 'API Key সেট করা নেই। নিচের 🔑 API Key বাটনে ক্লিক করে Key যোগ করো।' });
   }
 
   const systemInstruction = `তুমি বাংলাদেশের নবম-দশম (SSC) শ্রেণির NCTB পাঠ্যবই অনুসারে একজন অভিজ্ঞ ও বন্ধুত্বপূর্ণ পদার্থবিজ্ঞান শিক্ষক (PhysiAI)।
@@ -70,7 +71,7 @@ export default async function handler(req, res) {
 
   let promptText = message || '';
   if (chapter) promptText = `[অধ্যায়: ${chapter}]\n${promptText}`;
-  if (isMcq) promptText = `${chapter ? chapter + ' অধ্যায়ের' : 'নবম-দশম পদার্থবিজ্ঞানের'} ওপর ৫টি গুরুত্বপূর্ণ MCQ প্রশ্ন তৈরি করো (উত্তর ও ব্যাখ্যাসহ)।`;
+  if (isMcq) promptText = `${chapter ? chapter + ' অধ্যায়ের' : 'নবম-দশম পদার্থবিজ্ঞানের'} ওপর ২৫টি গুরুত্বপূর্ণ MCQ প্রশ্ন তৈরি করো (উত্তর ও ব্যাখ্যাসহ)।`;
 
   userParts.push({ text: promptText });
   contents.push({ role: 'user', parts: userParts });
