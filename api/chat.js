@@ -38,15 +38,14 @@ export default async function handler(req, res) {
   userParts.push({ text: promptText });
   contents.push({ role: 'user', parts: userParts });
 
-  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
   let lastError = '';
 
   for (const model of models) {
     try {
-      const apiUrl = new URL(`https://googleapis.com{model}:generateContent`);
-      apiUrl.searchParams.set('key', apiKey);
+      const endpoint = 'https://googleapis.com' + model + ':generateContent?key=' + apiKey;
 
-      const response = await fetch(apiUrl.toString(), {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
