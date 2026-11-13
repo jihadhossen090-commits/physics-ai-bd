@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>PhysiAI – পদার্থবিজ্ঞান শিক্ষক</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d4ed8">
+<script src="app.js" defer></script>
+<style>
+:root{--bg:#f5f7fb;--h1:#e8effd;--h2:#d2e1fc;--glass:rgba(255,255,255,.7);--card:#fff;--ink:#1b2432;--mute:#5a677d;--brand:#1d4ed8;--brand-ink:#fff;--bub:#e6eeff;--line:#d5dfee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--fs:1}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101522;--h1:#172544;--h2:#0f1930;--glass:rgba(255,255,255,.14);--card:#182032;--ink:#e5ebf5;--mute:#93a1b8;--brand:#60a5fa;--brand-ink:#09152b;--bub:#1e2d4a;--line:#2b3954;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Kalpurush","Siyam Rupali",system-ui,sans-serif;display:flex;flex-direction:column;line-height:1.7}
+header,main,.bar{position:relative;z-index:1}
+.bgart{position:fixed;inset:0;width:100%;height:100%;z-index:0;color:var(--brand);opacity:.085;pointer-events:none}
+.hero{position:relative;overflow:hidden;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 16px;background:linear-gradient(120deg,var(--h1),var(--h2));border-bottom:1px solid var(--line)}
+.hero .t{position:relative;z-index:1}
+.hero h1{margin:0;font-size:clamp(1.5rem,4.2vw,2.2rem);line-height:1.25;color:var(--ink)}
+.hero h1 b{color:var(--brand)}
+.hero p{margin:6px 0 0;font-size:.95rem;color:var(--mute)}
+.hero .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.hero .tags span{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;font-size:.8rem;padding:3px 12px}
+#chat{flex:1;overflow-y:auto;padding:16px clamp(10px,3vw,28px);display:flex;flex-direction:column;gap:14px;max-width:1100px;width:100%;margin:0 auto}
+.msg{padding:10px 14px;border-radius:14px;font-size:calc(1rem*var(--fs));word-wrap:break-word;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--brand);color:var(--brand-ink);max-width:80%}
+.msg.a{align-self:flex-start;background:var(--card);border:1px solid var(--line);width:100%;max-width:100%;padding:18px clamp(14px,2.5vw,28px);font-size:calc(1.05rem*var(--fs));line-height:1.9;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.msg.a.hint{width:auto}
+.msg.a>div.h{font-weight:700;color:var(--brand);margin-top:1em;font-size:1.06em}
+.msg.a>div.s{font-weight:700;margin-top:.7em}
+.msg.a>div.e{margin:.35em 0;padding:8px 14px;background:var(--bub);border-left:4px solid var(--brand);border-radius:8px;font-family:"Cambria Math","STIX Two Math",serif;font-size:1.12em;overflow-x:auto}
+.msg.a>div.l{padding-left:1.4em;position:relative}
+.msg.a>div.l::before{content:"•";position:absolute;left:.35em;color:var(--brand);font-weight:700}
+.msg.a>div.bk{height:.5em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1px solid var(--line);background:var(--bub);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.tools button{min-height:38px;border:1px solid var(--brand);background:var(--bub);color:var(--ink);border-radius:10px;padding:0 14px;font:inherit;font-size:.88rem;cursor:pointer}
+.bar{border-top:1px solid var(--line);background:var(--card);padding:10px 12px}
+.sel,.row,.note,.pv{max-width:1100px;margin:0 auto}
+.sel{margin-bottom:8px;display:flex;gap:8px;align-items:center}
+select{flex:1;font:inherit;font-size:.88rem;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-width:0}
+.fs{display:flex;gap:6px}
+.fs button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;font:inherit;min-width:44px;min-height:36px;cursor:pointer}
+.lnk{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--brand);border-radius:10px;color:var(--brand);background:var(--bub);cursor:pointer;font:inherit;font-size:.9rem;white-space:nowrap}
+.lnk.hot{background:#d32f2f;border-color:#d32f2f;color:#fff;font-weight:700}
+.row{display:flex;gap:8px}
+textarea{flex:1;font:inherit;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:none;min-height:52px;max-height:140px;font-size:calc(1rem*var(--fs))}
+.cam{border:1px solid var(--line);background:var(--bg);border-radius:12px;font-size:1.3rem;padding:0 12px;cursor:pointer;min-height:52px}
+button.send{border:0;background:var(--brand);color:var(--brand-ink);font-weight:700;cursor:pointer;width:52px;min-width:52px;min-height:52px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem}
+button:disabled{opacity:.5}
+.pv{margin-bottom:8px;display:none;align-items:center;gap:8px}
+.pv img{height:56px;border-radius:8px;border:1px solid var(--line)}
+.pv button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;font:inherit;padding:2px 10px;cursor:pointer}
+.note{margin-top:6px;color:var(--mute);font-size:.78rem;text-align:center}
+.msg img{display:block;max-width:180px;max-height:180px;border-radius:8px;margin-bottom:6px}
+body.chatting .hero{min-height:0;padding:8px 16px}
+body.chatting .hero p,body.chatting .hero .tags{display:none}
+body.chatting .hero h1{font-size:1.15rem}
+@media print{.bgart,.bar,.hero,.tools{display:none}}
+</style>
+</head>
+<body>
+<svg class="bgart" aria-hidden="true"><defs><pattern id="phys" width="320" height="240" patternUnits="userSpaceOnUse">
+<text x="20" y="50" font-size="20" fill="currentColor">F = ma</text>
+<text x="160" y="45" font-size="18" fill="currentColor">v = u + at</text>
+<text x="40" y="130" font-size="22" fill="currentColor">E = mc²</text>
+<text x="190" y="125" font-size="19" fill="currentColor">V = IR</text>
+<text x="30" y="205" font-size="18" fill="currentColor">P = W / t</text>
+<text x="175" y="200" font-size="20" fill="currentColor">Ω  λ  Δv</text>
+</pattern></defs><rect width="100%" height="100%" fill="url(#phys)"/></svg>
+
+<header class="hero">
+  <div class="t">
+    <h1><b>PhysiAI</b> – তোমার পদার্থবিজ্ঞান শিক্ষক</h1>
+    <p>SSC (নবম–দশম) · NCTB পাঠ্যবই অনুসারে</p>
+    <div class="tags">
+      <span>📷 ছবি দিয়ে প্রশ্ন</span>
+      <span>🧮 গাণিতিক সমাধান</span>
+      <span>📖 পাঠ্যবইয়ের সংযোগ</span>
+      <span>📝 MCQ টেস্ট দাও</span>
+    </div>
+  </div>
+</header>
+
+<main id="chat">
+  <div class="msg a hint">
+    আসসালামু আলাইকুম! আমি তোমার পদার্থবিজ্ঞান শিক্ষক। যেকোনো সূত্র, তত্ত্ব বা গাণিতিক প্রশ্ন লেখো, আমি সহজ বাংলায় ধাপে ধাপে বুঝিয়ে দেব। 😊
+    <div class="chips">
+      <button class="chip" onclick="askSample('নিউটনের গতির দ্বিতীয় সূত্র থেকে F = ma প্রমাণ করো।')">F = ma প্রমাণ</button>
+      <button class="chip" onclick="askSample('একটি 5 kg ভরের বস্তুর ওপর 20 N বল প্রয়োগ করলে ত্বরণ কত হবে?')">ত্বরণের অঙ্ক</button>
+      <button class="chip" onclick="askSample('ওহমের সূত্রটি চিত্রসহ সহজভাবে বুঝিয়ে দাও।')">ওহমের সূত্র</button>
+    </div>
+  </div>
+</main>
+
+<div class="bar">
+  <div class="sel">
+    <div class="fs">
+      <button type="button" onclick="setFs(-0.1)" title="লেখা ছোট করো">A−</button>
+      <button type="button" onclick="setFs(0.1)" title="লেখা বড় করো">A+</button>
+    </div>
+    <button type="button" class="lnk hot" onclick="startMcq()">📝 MCQ টেস্ট</button>
+    <select id="chap">
+      <option value="">অধ্যায় (ঐচ্ছিক)</option>
+      <option>১ম অধ্যায়: ভৌত রাশি ও পরিমাপ</option>
+      <option>২য় অধ্যায়: গতি</option>
+      <option>৩য় অধ্যায়: বল</option>
+      <option>৪র্থ অধ্যায়: কাজ, ক্ষমতা ও শক্তি</option>
+      <option>৫ম অধ্যায়: পদার্থের অবস্থা ও চাপ</option>
+      <option>৬ষ্ঠ অধ্যায়: বস্তুর ওপর তাপের প্রভাব</option>
+      <option>৭ম অধ্যায়: তরঙ্গ ও শব্দ</option>
+      <option>৮ম অধ্যায়: আলোর প্রতিফলন</option>
+      <option>৯ম অধ্যায়: আলোর প্রতিসরণ</option>
+      <option>১০ম অধ্যায়: স্থির তড়িৎ</option>
+      <option>১১শ অধ্যায়: চল তড়িৎ</option>
+      <option>১২শ অধ্যায়: তড়িতের চৌম্বক ক্রিয়া</option>
+      <option>১৩শ অধ্যায়: আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স</option>
+      <option>১৪শ অধ্যায়: জীবন বাঁচাতে পদার্থবিজ্ঞান</option>
+    </select>
+  </div>
+  <div class="pv" id="pv">
+    <img id="pvImg" alt="Preview">
+    <span>ছবি যুক্ত হয়েছে</span>
+    <button type="button" onclick="clearImg()">✕ সরাও</button>
+  </div>
+  <div class="row">
+    <input type="file" id="file" accept="image/*" hidden onchange="handleImg(this)">
+    <button type="button" class="cam" onclick="document.getElementById('file').click()" title="ছবি দাও">📷</button>
+    <button type="button" class="cam mic" id="micBtn" onclick="toggleMic()" title="মুখে বলো">🎤</button>
+    <textarea id="inp" rows="1" placeholder="পদার্থবিজ্ঞানের প্রশ্ন লেখো..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+    <button type="button" class="send" id="sendBtn" onclick="sendMsg()">➤</button>
+  </div>
+  <div class="note">I can make mistakes. Please check before use.</div>
+</div>
+</body>
+</html>
