@@ -1,6 +1,6 @@
 import https from 'node:https';
 
-function callGemini(path, payloadObj) {
+function callGemini(path, apiKey, payloadObj) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(payloadObj);
     const host = ['generativelanguage', 'googleapis', 'com'].join('.');
@@ -11,6 +11,7 @@ function callGemini(path, payloadObj) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
           'Content-Length': Buffer.byteLength(payload)
         }
       },
@@ -81,8 +82,8 @@ export default async function handler(req, res) {
 
   for (const model of models) {
     try {
-      const apiPath = '/v1beta/models/' + model + ':generateContent?key=' + apiKey;
-      const result = await callGemini(apiPath, {
+      const apiPath = '/v1beta/models/' + model + ':generateContent';
+      const result = await callGemini(apiPath, apiKey, {
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents
       });
