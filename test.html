@@ -2,121 +2,161 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<title>MCQ টেস্ট – PhysiAI</title>
+<title>অধ্যায়ভিত্তিক MCQ টেস্ট – PhysiAI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1d4ed8">
 <style>
-:root{--bg:#f5f7fb;--h1:#e8effd;--h2:#d2e1fc;--card:#fff;--ink:#1b2432;--mute:#5a677d;--brand:#1d4ed8;--brand-ink:#fff;--bub:#e6eeff;--line:#d5dfee;--ok:#16a34a;--bad:#dc2626}
-@media (prefers-color-scheme:dark){:root{--bg:#101522;--h1:#172544;--h2:#0f1930;--card:#182032;--ink:#e5ebf5;--mute:#93a1b8;--brand:#60a5fa;--brand-ink:#09152b;--bub:#1e2d4a;--line:#2b3954;color-scheme:dark}}
+:root{--bg:#f5f7fb;--card:#fff;--ink:#1b2432;--mute:#5a677d;--brand:#1d4ed8;--brand-ink:#fff;--bub:#e6eeff;--line:#d5dfee;--ok:#16a34a;--bad:#dc2626}
+@media (prefers-color-scheme:dark){:root{--bg:#101522;--card:#182032;--ink:#e5ebf5;--mute:#93a1b8;--brand:#60a5fa;--brand-ink:#09152b;--bub:#1e2d4a;--line:#2b3954;color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Kalpurush",system-ui,sans-serif;line-height:1.6}
-.hero{padding:18px 16px;text-align:center;background:linear-gradient(120deg,var(--h1),var(--h2));border-bottom:1px solid var(--line)}
-.hero h1{margin:0;font-size:1.6rem}
-.hero h1 b{color:var(--brand)}
-.hero p{margin:4px 0 10px;color:var(--mute);font-size:.92rem}
-.back{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--card);border:1px solid var(--brand);color:var(--brand);text-decoration:none;font-size:.88rem;font-weight:700}
-.wrap{max-width:820px;margin:18px auto;padding:0 14px 40px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
-label{display:block;font-size:.88rem;font-weight:700;margin-bottom:5px;color:var(--mute)}
-select,button.btn{width:100%;font:inherit;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
-button.btn{background:var(--brand);color:var(--brand-ink);border:0;font-weight:700;cursor:pointer;font-size:1rem}
-button.btn:disabled{opacity:.55;cursor:not-allowed}
-.qcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
-.qtitle{font-weight:700;font-size:1.05rem;margin-bottom:10px}
+.bgart{position:fixed;inset:0;width:100%;height:100%;z-index:0;color:var(--brand);opacity:.07;pointer-events:none}
+.topbar{position:relative;z-index:1;text-align:center;padding:12px;border-bottom:1px solid var(--line);background:var(--card);font-weight:700;color:var(--brand);font-size:1.05rem}
+.wrap{position:relative;z-index:1;max-width:960px;margin:20px auto;padding:0 16px 50px}
+.back{display:inline-flex;align-items:center;padding:6px 14px;border-radius:10px;background:var(--bub);border:1px solid var(--brand);color:var(--brand);text-decoration:none;font-size:.9rem;font-weight:700;margin-bottom:16px}
+h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
+.sub{margin:0 0 18px;color:var(--mute);font-size:.95rem}
+.tabs{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.tab{padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s}
+.tab.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.grid{grid-template-columns:1fr}}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;transition:.15s;text-align:left}
+.ccard:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.cnum{color:var(--brand);font-weight:700;font-size:.88rem;margin-bottom:4px}
+.ctitle{font-weight:700;font-size:1.05rem;margin-bottom:6px}
+.ccount{color:var(--mute);font-size:.85rem}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.qtitle{font-weight:700;font-size:1.05rem;margin-bottom:12px}
 .opts{display:flex;flex-direction:column;gap:8px}
-.opt{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s}
+.opt{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);cursor:pointer;display:flex;align-items:center;gap:10px}
 .opt:hover{border-color:var(--brand)}
-.opt.sel{background:var(--bub);border-color:var(--brand);font-weight:700}
-.opt.correct{background:rgba(22,163,74,.15);border-color:var(--ok);color:var(--ok);font-weight:700}
-.opt.wrong{background:rgba(220,38,38,.15);border-color:var(--bad);color:var(--bad)}
-.exp{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--bub);font-size:.92rem;display:none}
-.score{text-align:center;padding:20px;border-radius:14px;background:var(--bub);border:2px solid var(--brand);margin-bottom:16px}
-.score h2{margin:0 0 6px;color:var(--brand);font-size:1.6rem}
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:700;color:var(--brand)}
+.opt.correct{background:rgba(22,163,74,.16);border-color:var(--ok);color:var(--ok);font-weight:700}
+.opt.wrong{background:rgba(220,38,38,.16);border-color:var(--bad);color:var(--bad)}
+.exp{margin-top:10px;padding:10px 14px;border-radius:8px;background:var(--bub);font-size:.92rem;display:none}
+.btn{padding:11px 20px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-ink);font:inherit;font-weight:700;cursor:pointer;font-size:.95rem}
+.qhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px}
 </style>
 </head>
 <body>
-<header class="hero">
-  <h1>📝 <b>PhysiAI</b> – MCQ পরীক্ষা কেন্দ্র</h1>
-  <p>SSC (নবম–দশম) পদার্থবিজ্ঞান · অধ্যায়ভিত্তিক অনলাইন মডেল টেস্ট</p>
-  <a href="index.html" class="back">← শিক্ষক চ্যাটে ফিরে যাও</a>
-</header>
+<svg class="bgart" aria-hidden="true"><defs><pattern id="phys" width="300" height="220" patternUnits="userSpaceOnUse">
+<text x="20" y="50" font-size="18" fill="currentColor">F = ma</text>
+<text x="160" y="45" font-size="16" fill="currentColor">v = u + at</text>
+<text x="40" y="130" font-size="20" fill="currentColor">E = mc²</text>
+<text x="185" y="125" font-size="18" fill="currentColor">V = IR</text>
+<text x="30" y="195" font-size="16" fill="currentColor">P = W/t</text>
+<text x="170" y="190" font-size="18" fill="currentColor">Ω  λ  Δv</text>
+</pattern></defs><rect width="100%" height="100%" fill="url(#phys)"/></svg>
+
+<div class="topbar">PhysiAI – তোমার পদার্থবিজ্ঞান শিক্ষক</div>
 
 <div class="wrap">
-  <div class="box" id="setupBox">
-    <div class="grid">
-      <div>
-        <label>অধ্যায় নির্বাচন করো</label>
-        <select id="chap">
-          <option value="সম্পূর্ণ বই (সমন্বিত)">সব অধ্যায় (মডেল টেস্ট)</option>
-          <option>১ম অধ্যায়: ভৌত রাশি ও পরিমাপ</option>
-          <option>২য় অধ্যায়: গতি</option>
-          <option>৩য় অধ্যায়: বল</option>
-          <option>৪র্থ অধ্যায়: কাজ, ক্ষমতা ও শক্তি</option>
-          <option>৫ম অধ্যায়: পদার্থের অবস্থা ও চাপ</option>
-          <option>৬ষ্ঠ অধ্যায়: বস্তুর ওপর তাপের প্রভাব</option>
-          <option>৭ম অধ্যায়: তরঙ্গ ও শব্দ</option>
-          <option>৮ম অধ্যায়: আলোর প্রতিফলন</option>
-          <option>৯ম অধ্যায়: আলোর প্রতিসরণ</option>
-          <option>১০ম অধ্যায়: স্থির তড়িৎ</option>
-          <option>১১শ অধ্যায়: চল তড়িৎ</option>
-          <option>১২শ অধ্যায়: তড়িতের চৌম্বক ক্রিয়া</option>
-          <option>১৩শ অধ্যায়: আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স</option>
-          <option>১৪শ অধ্যায়: জীবন বাঁচাতে পদার্থবিজ্ঞান</option>
-        </select>
-      </div>
-      <div>
-        <label>প্রশ্নের সংখ্যা</label>
-        <select id="count">
-          <option value="5">৫টি প্রশ্ন (দ্রুত প্র্যাকটিস)</option>
-          <option value="10" selected>১০টি প্রশ্ন (স্ট্যান্ডার্ড)</option>
-          <option value="25">২৫টি প্রশ্ন (বোর্ড পরীক্ষা)</option>
-        </select>
-      </div>
+  <a href="index.html" class="back">← প্রশ্ন করো</a>
+
+  <div id="homeView">
+    <h1>📘 অধ্যায়ভিত্তিক MCQ টেস্ট</h1>
+    <p class="sub">অধ্যায় বেছে নাও। প্রতিটি উত্তরের পরেই সঠিক উত্তর ও ব্যাখ্যা দেখতে পাবে।</p>
+
+    <div class="tabs">
+      <button class="tab active" id="tabBook" onclick="setMode('book')">📗 বইয়ের প্রশ্ন</button>
+      <button class="tab" id="tabAi" onclick="setMode('ai')">🤖 AI নতুন প্রশ্ন</button>
     </div>
-    <button class="btn" id="startBtn" onclick="startQuiz()">🚀 পরীক্ষা শুরু করো</button>
-    <p id="status" style="text-align:center;color:var(--mute);margin:10px 0 0;font-size:.92rem"></p>
+
+    <div class="grid" id="chapGrid"></div>
   </div>
 
-  <div id="resultBox" style="display:none"></div>
-  <div id="quizBox" style="display:none">
-    <div class="top-bar">
-      <span id="qInfo">মোট প্রশ্ন: ১০টি</span>
-      <span id="timer">⏱️ ০:০০</span>
+  <div id="quizView" style="display:none">
+    <div class="qhead">
+      <div>
+        <strong id="activeChapTitle" style="color:var(--brand);font-size:1.1rem"></strong>
+        <div id="activeModeTag" style="font-size:.85rem;color:var(--mute)"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="scoreBadge" style="font-weight:700;color:var(--brand)">স্কোর: ০ / ০</span>
+        <button class="btn" onclick="backToChapters()">অধ্যায় তালিকা</button>
+      </div>
     </div>
+    <div id="loadingMsg" style="text-align:center;padding:30px;font-weight:700;color:var(--brand)"></div>
     <div id="qList"></div>
-    <button class="btn" id="submitBtn" onclick="submitQuiz()">✅ উত্তর জমা দাও (Submit)</button>
   </div>
 </div>
 
 <script>
-let questions = [];
-let userAns = {};
-let sec = 0;
-let timerInt = null;
+const chapters = [
+  { num: "অধ্যায় ১", title: "ভৌত রাশি ও পরিমাপ", count: 15 },
+  { num: "অধ্যায় ২", title: "গতি", count: 20 },
+  { num: "অধ্যায় ৩", title: "বল", count: 20 },
+  { num: "অধ্যায় ৪", title: "কাজ, ক্ষমতা ও শক্তি", count: 18 },
+  { num: "অধ্যায় ৫", title: "পদার্থের অবস্থা ও চাপ", count: 16 },
+  { num: "অধ্যায় ৬", title: "বস্তুর ওপর তাপের প্রভাব", count: 15 },
+  { num: "অধ্যায় ৭", title: "তরঙ্গ ও শব্দ", count: 16 },
+  { num: "অধ্যায় ৮", title: "আলোর প্রতিফলন", count: 18 },
+  { num: "অধ্যায় ৯", title: "আলোর প্রতিসরণ", count: 18 },
+  { num: "অধ্যায় ১০", title: "স্থির তড়িৎ", count: 15 },
+  { num: "অধ্যায় ১১", title: "চল তড়িৎ", count: 20 },
+  { num: "অধ্যায় ১২", title: "তড়িতের চৌম্বক ক্রিয়া", count: 14 },
+  { num: "অধ্যায় ১৩", title: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", count: 15 },
+  { num: "অধ্যায় ১৪", title: "জীবন বাঁচাতে পদার্থবিজ্ঞান", count: 12 }
+];
 
-async function startQuiz() {
-  const chap = document.getElementById('chap').value;
-  const count = document.getElementById('count').value;
-  const btn = document.getElementById('startBtn');
-  const st = document.getElementById('status');
+let mode = 'book';
+let score = 0;
+let answered = 0;
+let totalQ = 0;
+
+function renderChapters() {
+  const grid = document.getElementById('chapGrid');
+  grid.innerHTML = chapters.map((c, i) => `
+    <div class="ccard" onclick="openChapter(${i})">
+      <div class="cnum">${c.num}</div>
+      <div class="ctitle">${c.title}</div>
+      <div class="ccount">${mode === 'book' ? c.count + 'টি অনুশীলনী প্রশ্ন' : '১০টি নতুন AI প্রশ্ন'}</div>
+    </div>
+  `).join('');
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tabBook').classList.toggle('active', m === 'book');
+  document.getElementById('tabAi').classList.toggle('active', m === 'ai');
+  renderChapters();
+}
+
+function backToChapters() {
+  document.getElementById('quizView').style.display = 'none';
+  document.getElementById('homeView').style.display = 'block';
+}
+
+async function openChapter(idx) {
+  const ch = chapters[idx];
   const savedKey = (localStorage.getItem('gemini_api_key') || '').trim();
+  const qCount = mode === 'book' ? Math.min(ch.count, 15) : 10;
 
-  btn.disabled = true;
-  st.textContent = 'AI প্রশ্নপত্র তৈরি করছে... অনুগ্রহ করে ৫-১০ সেকেন্ড অপেক্ষা করো ⏳';
-  document.getElementById('resultBox').style.display = 'none';
-  document.getElementById('quizBox').style.display = 'none';
+  document.getElementById('homeView').style.display = 'none';
+  document.getElementById('quizView').style.display = 'block';
+  document.getElementById('activeChapTitle').textContent = `${ch.num}: ${ch.title}`;
+  document.getElementById('activeModeTag').textContent = mode === 'book' ? '📗 পাঠ্যবইয়ের অনুশীলনী ও বোর্ড ভিত্তিক প্রশ্ন' : '🤖 AI তৈরি নতুন সৃজনশীল MCQ';
+  document.getElementById('qList').innerHTML = '';
+  document.getElementById('loadingMsg').textContent = 'প্রশ্ন তৈরি হচ্ছে... অনুগ্রহ করে কয়েক সেকেন্ড অপেক্ষা করো ⏳';
 
-  const prompt = `বাংলাদেশের নবম-দশম (SSC) শ্রেণির NCTB পদার্থবিজ্ঞান বইয়ের "${chap}" থেকে ঠিক ${count}টি মানসম্মত বোর্ড স্ট্যান্ডার্ড MCQ প্রশ্ন তৈরি করো।
+  score = 0;
+  answered = 0;
+  totalQ = qCount;
+  updateScore();
+
+  const sourceType = mode === 'book'
+    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বিগত বোর্ড পরীক্ষায় আসা হুবহু গুরুত্বপূর্ণ'
+    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান সিলেবাস অনুযায়ী একদম নতুন ও সৃজনশীল (গাণিতিক ও তাত্ত্বিক)';
+
+  const prompt = `${sourceType} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক ${qCount}টি MCQ প্রশ্ন তৈরি করো।
 শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে (বাইরে কোনো কথা বা markdown লিখবে না):
 [
   {
     "q": "প্রশ্নটি এখানে লেখো",
     "options": ["ক অপশন", "খ অপশন", "গ অপশন", "ঘ অপশন"],
     "ans": 0,
-    "exp": "কেন এটি সঠিক তার ১-২ লাইনের সংক্ষিপ্ত ব্যাখ্যা"
+    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা"
   }
 ]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
@@ -125,104 +165,32 @@ async function startQuiz() {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: prompt, chapter: chap, userApiKey: savedKey })
+      body: JSON.stringify({ message: prompt, chapter: `${ch.num}: ${ch.title}`, userApiKey: savedKey })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
 
     const raw = data.reply.replace(/```json|```/g, '').trim();
-    const sIdx = raw.indexOf('[');
-    const eIdx = raw.lastIndexOf(']');
-    questions = JSON.parse(raw.slice(sIdx, eIdx + 1));
-
-    renderQuiz();
+    const list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
+    totalQ = list.length;
+    updateScore();
+    document.getElementById('loadingMsg').textContent = '';
+    renderQuestions(list);
   } catch (e) {
-    st.textContent = '⚠️ সমস্যা হয়েছে: ' + e.message + ' (আবার চেষ্টা করো)';
+    document.getElementById('loadingMsg').textContent = '⚠️ সমস্যা হয়েছে: ' + e.message;
   }
-  btn.disabled = false;
 }
 
-function renderQuiz() {
-  document.getElementById('status').textContent = '';
-  document.getElementById('setupBox').style.display = 'none';
-  document.getElementById('quizBox').style.display = 'block';
-  document.getElementById('submitBtn').style.display = 'block';
-  document.getElementById('qInfo').textContent = `মোট প্রশ্ন: ${questions.length}টি`;
-
-  userAns = {};
-  const list = document.getElementById('qList');
-  list.innerHTML = '';
+function renderQuestions(list) {
   const labels = ['ক', 'খ', 'গ', 'ঘ'];
-
-  questions.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className = 'qcard';
-    div.innerHTML = `
-      <div class="qtitle">${idx + 1}. ${esc(item.q)}</div>
-      <div class="opts" id="opts-${idx}">
+  const box = document.getElementById('qList');
+  box.innerHTML = list.map((item, qIdx) => `
+    <div class="qcard" id="card-${qIdx}">
+      <div class="qtitle">${qIdx + 1}. ${esc(item.q)}</div>
+      <div class="opts">
         ${item.options.map((op, oIdx) => `
-          <div class="opt" onclick="pick(${idx}, ${oIdx}, this)">
+          <div class="opt" onclick="checkAns(${qIdx}, ${oIdx}, ${item.ans}, this)">
             <b>${labels[oIdx]})</b> <span>${esc(op)}</span>
           </div>
         `).join('')}
       </div>
-      <div class="exp" id="exp-${idx}">💡 <b>ব্যাখ্যা:</b> ${esc(item.exp || '')}</div>
-    `;
-    list.appendChild(div);
-  });
-
-  clearInterval(timerInt);
-  sec = 0;
-  timerInt = setInterval(() => {
-    sec++;
-    const m = Math.floor(sec / 60);
-    const s = String(sec % 60).padStart(2, '0');
-    document.getElementById('timer').textContent = `⏱️ ${m}:${s}`;
-  }, 1000);
-}
-
-function pick(qIdx, oIdx, el) {
-  if (!document.getElementById('submitBtn').offsetParent) return;
-  userAns[qIdx] = oIdx;
-  const parent = document.getElementById(`opts-${qIdx}`);
-  parent.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-function submitQuiz() {
-  clearInterval(timerInt);
-  document.getElementById('submitBtn').style.display = 'none';
-  let correct = 0;
-
-  questions.forEach((item, idx) => {
-    const parent = document.getElementById(`opts-${idx}`);
-    const opts = parent.querySelectorAll('.opt');
-    const chosen = userAns[idx];
-
-    if (chosen === item.ans) correct++;
-    opts.forEach((o, oIdx) => {
-      o.classList.remove('sel');
-      if (oIdx === item.ans) o.classList.add('correct');
-      else if (oIdx === chosen) o.classList.add('wrong');
-    });
-    document.getElementById(`exp-${idx}`).style.display = 'block';
-  });
-
-  const resBox = document.getElementById('resultBox');
-  resBox.style.display = 'block';
-  resBox.innerHTML = `
-    <div class="score">
-      <h2>তোমার স্কোর: ${correct} / ${questions.length}</h2>
-      <p>সঠিক উত্তর: ${correct}টি · ভুল/উত্তর দাওনি: ${questions.length - correct}টি · সময়: ${document.getElementById('timer').textContent.replace('⏱️ ','')}</p>
-      <button class="btn" style="max-width:260px;margin-top:8px" onclick="resetQuiz()">🔄 নতুন পরীক্ষা দাও</button>
-    </div>
-  `;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function resetQuiz() {
-  document.getElementById('resultBox').style.display = 'none';
-  document.getElementById('quizBox').style.display = 'none';
-  document.getElementById('setupBox').style.display = 'block';
-}
-
