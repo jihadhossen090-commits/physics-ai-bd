@@ -9,16 +9,17 @@
 :root{--bg:#f5f7fb;--card:#fff;--ink:#1b2432;--mute:#5a677d;--brand:#1d4ed8;--brand-ink:#fff;--bub:#e6eeff;--line:#d5dfee;--ok:#16a34a;--bad:#dc2626}
 @media (prefers-color-scheme:dark){:root{--bg:#101522;--card:#182032;--ink:#e5ebf5;--mute:#93a1b8;--brand:#60a5fa;--brand-ink:#09152b;--bub:#1e2d4a;--line:#2b3954;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Kalpurush",system-ui,sans-serif;line-height:1.6}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Kalpurush",system-ui,sans-serif;line-height:1.65}
 .bgart{position:fixed;inset:0;width:100%;height:100%;z-index:0;color:var(--brand);opacity:.07;pointer-events:none}
 .topbar{position:relative;z-index:1;text-align:center;padding:12px;border-bottom:1px solid var(--line);background:var(--card);font-weight:700;color:var(--brand);font-size:1.05rem}
-.wrap{position:relative;z-index:1;max-width:960px;margin:20px auto;padding:0 16px 50px}
-.back{display:inline-flex;align-items:center;padding:6px 14px;border-radius:10px;background:var(--bub);border:1px solid var(--brand);color:var(--brand);text-decoration:none;font-size:.9rem;font-weight:700;margin-bottom:16px}
+.wrap{position:relative;z-index:1;max-width:960px;margin:18px auto;padding:0 16px 50px}
+.pill-btn{display:inline-flex;align-items:center;padding:6px 14px;border-radius:999px;background:var(--bub);border:1px solid var(--brand);color:var(--brand);text-decoration:none;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px}
 h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 .sub{margin:0 0 18px;color:var(--mute);font-size:.95rem}
-.tabs{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.tabs{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .tab{padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s}
 .tab.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.notice{background:var(--bub);border:1px solid var(--brand);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:.92rem;display:none}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:500px){.grid{grid-template-columns:1fr}}
@@ -27,16 +28,26 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 .cnum{color:var(--brand);font-weight:700;font-size:.88rem;margin-bottom:4px}
 .ctitle{font-weight:700;font-size:1.05rem;margin-bottom:6px}
 .ccount{color:var(--mute);font-size:.85rem}
-.qcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
-.qtitle{font-weight:700;font-size:1.05rem;margin-bottom:12px}
-.opts{display:flex;flex-direction:column;gap:8px}
-.opt{padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);cursor:pointer;display:flex;align-items:center;gap:10px}
+.qmeta{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:.92rem;margin-bottom:14px;font-weight:700}
+.qtext{font-weight:700;font-size:1.2rem;margin-bottom:18px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:1rem;transition:.15s}
 .opt:hover{border-color:var(--brand)}
-.opt.correct{background:rgba(22,163,74,.16);border-color:var(--ok);color:var(--ok);font-weight:700}
-.opt.wrong{background:rgba(220,38,38,.16);border-color:var(--bad);color:var(--bad)}
-.exp{margin-top:10px;padding:10px 14px;border-radius:8px;background:var(--bub);font-size:.92rem;display:none}
-.btn{padding:11px 20px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-ink);font:inherit;font-weight:700;cursor:pointer;font-size:.95rem}
-.qhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding:12px 16px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.opt.correct{background:rgba(22,163,74,.14);border-color:var(--ok);color:var(--ok);font-weight:700}
+.opt.wrong{background:rgba(220,38,38,.14);border-color:var(--bad);color:var(--bad);font-weight:700}
+.fb{margin-top:16px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bub);display:none}
+.fb.ok{border-color:var(--ok);background:rgba(22,163,74,.12)}
+.fb.bad{border-color:var(--bad);background:rgba(220,38,38,.12)}
+.fb-title{font-weight:700;font-size:1rem;margin-bottom:4px}
+.btn{padding:11px 20px;border-radius:12px;border:0;background:var(--brand);color:var(--brand-ink);font:inherit;font-weight:700;cursor:pointer;font-size:.95rem;margin-top:16px}
+.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.res-head{margin-bottom:20px}
+.res-big{font-size:2.1rem;font-weight:700;color:var(--brand);margin:6px 0}
+.wcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.wcard .wq{font-weight:700;margin-bottom:6px}
+.wcard .wa{color:var(--ok);font-weight:700;font-size:.92rem;margin-bottom:4px}
+.wcard .we{color:var(--mute);font-size:.88rem}
+.act-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 </style>
 </head>
 <body>
@@ -52,9 +63,8 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 <div class="topbar">PhysiAI – তোমার পদার্থবিজ্ঞান শিক্ষক</div>
 
 <div class="wrap">
-  <a href="index.html" class="back">← প্রশ্ন করো</a>
-
   <div id="homeView">
+    <a href="index.html" class="pill-btn">← প্রশ্ন করো</a>
     <h1>📘 অধ্যায়ভিত্তিক MCQ টেস্ট</h1>
     <p class="sub">অধ্যায় বেছে নাও। প্রতিটি উত্তরের পরেই সঠিক উত্তর ও ব্যাখ্যা দেখতে পাবে।</p>
 
@@ -63,55 +73,88 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
       <button class="tab" id="tabAi" onclick="setMode('ai')">🤖 AI নতুন প্রশ্ন</button>
     </div>
 
+    <div class="notice" id="aiNotice">
+      প্রতিবার AI পাঠ্যবইয়ের নোট থেকে ২০টি নতুন প্রশ্ন বানায় (তৈরি হতে ১০–৩০ সেকেন্ড লাগতে পারে)। AI ভুল করতে পারে, তাই উত্তর বইয়ের সাথে মিলিয়ে নিও। (প্রতিদিন সীমিত সংখ্যক বার)
+    </div>
+
     <div class="grid" id="chapGrid"></div>
   </div>
 
   <div id="quizView" style="display:none">
-    <div class="qhead">
-      <div>
-        <strong id="activeChapTitle" style="color:var(--brand);font-size:1.1rem"></strong>
-        <div id="activeModeTag" style="font-size:.85rem;color:var(--mute)"></div>
+    <button class="pill-btn" onclick="backToChapters()">← অধ্যায় তালিকায় ফিরে যাও</button>
+    <div id="loadingBox" style="text-align:center;padding:40px 10px;font-weight:700;color:var(--brand);font-size:1.1rem"></div>
+
+    <div id="questionArea" style="display:none">
+      <div class="qmeta">
+        <span id="qChapTag">অধ্যায় ১</span>
+        <span id="qProgress">প্রশ্ন 1 / 15</span>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span id="scoreBadge" style="font-weight:700;color:var(--brand)">স্কোর: ০ / ০</span>
-        <button class="btn" onclick="backToChapters()">অধ্যায় তালিকা</button>
+      <div class="qtext" id="qText"></div>
+      <div class="opts" id="optList"></div>
+      <div class="fb" id="fbBox">
+        <div class="fb-title" id="fbTitle"></div>
+        <div id="fbExp"></div>
       </div>
+      <button class="btn" id="nextBtn" style="display:none" onclick="nextQuestion()">পরবর্তী প্রশ্ন →</button>
     </div>
-    <div id="loadingMsg" style="text-align:center;padding:30px;font-weight:700;color:var(--brand)"></div>
-    <div id="qList"></div>
+  </div>
+
+  <div id="resultView" style="display:none">
+    <button class="pill-btn" onclick="backToChapters()">← অধ্যায় তালিকায় ফিরে যাও</button>
+    <div class="res-head">
+      <div id="resChapLabel" style="color:var(--mute);font-weight:700"></div>
+      <div class="res-big" id="resScoreBig">0 / 0 (0%)</div>
+      <div id="resMsg" style="color:var(--mute)"></div>
+    </div>
+
+    <div id="wrongSection" style="display:none">
+      <h3 style="margin:0 0 12px;font-size:1.05rem">যে প্রশ্নগুলো ভুল হয়েছে</h3>
+      <div id="wrongList"></div>
+    </div>
+
+    <div class="act-row">
+      <button class="btn" onclick="retryFull()">আবার টেস্ট দাও</button>
+      <button class="btn sec" id="retryWrongBtn" style="display:none" onclick="retryWrong()">ভুলগুলো আবার</button>
+      <button class="btn sec" onclick="backToChapters()">অন্য অধ্যায়</button>
+    </div>
   </div>
 </div>
 
 <script>
 const chapters = [
-  { num: "অধ্যায় ১", title: "ভৌত রাশি ও পরিমাপ", count: 15 },
-  { num: "অধ্যায় ২", title: "গতি", count: 20 },
-  { num: "অধ্যায় ৩", title: "বল", count: 20 },
-  { num: "অধ্যায় ৪", title: "কাজ, ক্ষমতা ও শক্তি", count: 18 },
-  { num: "অধ্যায় ৫", title: "পদার্থের অবস্থা ও চাপ", count: 16 },
+  { num: "অধ্যায় ১", title: "ভৌত রাশি ও পরিমাপ", count: 14 },
+  { num: "অধ্যায় ২", title: "গতি", count: 18 },
+  { num: "অধ্যায় ৩", title: "বল", count: 18 },
+  { num: "অধ্যায় ৪", title: "কাজ, ক্ষমতা ও শক্তি", count: 16 },
+  { num: "অধ্যায় ৫", title: "পদার্থের অবস্থা ও চাপ", count: 15 },
   { num: "অধ্যায় ৬", title: "বস্তুর ওপর তাপের প্রভাব", count: 15 },
   { num: "অধ্যায় ৭", title: "তরঙ্গ ও শব্দ", count: 16 },
-  { num: "অধ্যায় ৮", title: "আলোর প্রতিফলন", count: 18 },
-  { num: "অধ্যায় ৯", title: "আলোর প্রতিসরণ", count: 18 },
-  { num: "অধ্যায় ১০", title: "স্থির তড়িৎ", count: 15 },
-  { num: "অধ্যায় ১১", title: "চল তড়িৎ", count: 20 },
+  { num: "অধ্যায় ৮", title: "আলোর প্রতিফলন", count: 16 },
+  { num: "অধ্যায় ৯", title: "আলোর প্রতিসরণ", count: 16 },
+  { num: "অধ্যায় ১০", title: "স্থির তড়িৎ", count: 14 },
+  { num: "অধ্যায় ১১", title: "চল তড়িৎ", count: 18 },
   { num: "অধ্যায় ১২", title: "তড়িতের চৌম্বক ক্রিয়া", count: 14 },
-  { num: "অধ্যায় ১৩", title: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", count: 15 },
+  { num: "অধ্যায় ১৩", title: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", count: 14 },
   { num: "অধ্যায় ১৪", title: "জীবন বাঁচাতে পদার্থবিজ্ঞান", count: 12 }
 ];
 
+const labels = ['ক', 'খ', 'গ', 'ঘ'];
 let mode = 'book';
+let activeChapIdx = 0;
+let allQuestions = [];
+let activeList = [];
+let curIdx = 0;
 let score = 0;
-let answered = 0;
-let totalQ = 0;
+let wrongQuestions = [];
+let answeredCurrent = false;
 
 function renderChapters() {
   const grid = document.getElementById('chapGrid');
   grid.innerHTML = chapters.map((c, i) => `
-    <div class="ccard" onclick="openChapter(${i})">
+    <div class="ccard" onclick="startChapter(${i})">
       <div class="cnum">${c.num}</div>
       <div class="ctitle">${c.title}</div>
-      <div class="ccount">${mode === 'book' ? c.count + 'টি অনুশীলনী প্রশ্ন' : '১০টি নতুন AI প্রশ্ন'}</div>
+      <div class="ccount">${mode === 'book' ? c.count + 'টি প্রশ্ন' : '২০টি নতুন AI প্রশ্ন'}</div>
     </div>
   `).join('');
 }
@@ -120,43 +163,41 @@ function setMode(m) {
   mode = m;
   document.getElementById('tabBook').classList.toggle('active', m === 'book');
   document.getElementById('tabAi').classList.toggle('active', m === 'ai');
+  document.getElementById('aiNotice').style.display = m === 'ai' ? 'block' : 'none';
   renderChapters();
 }
 
 function backToChapters() {
   document.getElementById('quizView').style.display = 'none';
+  document.getElementById('resultView').style.display = 'none';
   document.getElementById('homeView').style.display = 'block';
 }
 
-async function openChapter(idx) {
+async function startChapter(idx) {
+  activeChapIdx = idx;
   const ch = chapters[idx];
   const savedKey = (localStorage.getItem('gemini_api_key') || '').trim();
-  const qCount = mode === 'book' ? Math.min(ch.count, 15) : 10;
+  const qCount = mode === 'book' ? ch.count : 20;
 
   document.getElementById('homeView').style.display = 'none';
+  document.getElementById('resultView').style.display = 'none';
   document.getElementById('quizView').style.display = 'block';
-  document.getElementById('activeChapTitle').textContent = `${ch.num}: ${ch.title}`;
-  document.getElementById('activeModeTag').textContent = mode === 'book' ? '📗 পাঠ্যবইয়ের অনুশীলনী ও বোর্ড ভিত্তিক প্রশ্ন' : '🤖 AI তৈরি নতুন সৃজনশীল MCQ';
-  document.getElementById('qList').innerHTML = '';
-  document.getElementById('loadingMsg').textContent = 'প্রশ্ন তৈরি হচ্ছে... অনুগ্রহ করে কয়েক সেকেন্ড অপেক্ষা করো ⏳';
+  document.getElementById('questionArea').style.display = 'none';
+  document.getElementById('loadingBox').style.display = 'block';
+  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — ${qCount}টি প্রশ্ন তৈরি হচ্ছে... ১০-২০ সেকেন্ড অপেক্ষা করো ⏳`;
 
-  score = 0;
-  answered = 0;
-  totalQ = qCount;
-  updateScore();
+  const sourceDesc = mode === 'book'
+    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
+    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
 
-  const sourceType = mode === 'book'
-    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বিগত বোর্ড পরীক্ষায় আসা হুবহু গুরুত্বপূর্ণ'
-    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান সিলেবাস অনুযায়ী একদম নতুন ও সৃজনশীল (গাণিতিক ও তাত্ত্বিক)';
-
-  const prompt = `${sourceType} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক ${qCount}টি MCQ প্রশ্ন তৈরি করো।
+  const prompt = `${sourceDesc} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক ${qCount}টি MCQ প্রশ্ন তৈরি করো।
 শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে (বাইরে কোনো কথা বা markdown লিখবে না):
 [
   {
     "q": "প্রশ্নটি এখানে লেখো",
     "options": ["ক অপশন", "খ অপশন", "গ অপশন", "ঘ অপশন"],
     "ans": 0,
-    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা"
+    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা ও পাঠ্যবইয়ের অনুচ্ছেদ উল্লেখ করো"
   }
 ]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
@@ -171,53 +212,121 @@ async function openChapter(idx) {
     if (data.error) throw new Error(data.error);
 
     const raw = data.reply.replace(/```json|```/g, '').trim();
-    const list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
-    totalQ = list.length;
-    updateScore();
-    document.getElementById('loadingMsg').textContent = '';
-    renderQuestions(list);
+    allQuestions = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
+    beginSession(allQuestions);
   } catch (e) {
-    document.getElementById('loadingMsg').textContent = '⚠️ সমস্যা হয়েছে: ' + e.message;
+    document.getElementById('loadingBox').textContent = '⚠️ সমস্যা হয়েছে: ' + e.message;
   }
 }
 
-function renderQuestions(list) {
-  const labels = ['ক', 'খ', 'গ', 'ঘ'];
-  const box = document.getElementById('qList');
-  box.innerHTML = list.map((item, qIdx) => `
-    <div class="qcard" id="card-${qIdx}">
-      <div class="qtitle">${qIdx + 1}. ${esc(item.q)}</div>
-      <div class="opts">
-        ${item.options.map((op, oIdx) => `
-          <div class="opt" onclick="checkAns(${qIdx}, ${oIdx}, ${item.ans}, this)">
-            <b>${labels[oIdx]})</b> <span>${esc(op)}</span>
-          </div>
-        `).join('')}
-      </div>
-      <div class="exp" id="exp-${qIdx}">💡 <b>ব্যাখ্যা:</b> ${esc(item.exp || '')}</div>
+function beginSession(list) {
+  activeList = list;
+  curIdx = 0;
+  score = 0;
+  wrongQuestions = [];
+  document.getElementById('loadingBox').style.display = 'none';
+  document.getElementById('resultView').style.display = 'none';
+  document.getElementById('quizView').style.display = 'block';
+  document.getElementById('questionArea').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  answeredCurrent = false;
+  const ch = chapters[activeChapIdx];
+  const item = activeList[curIdx];
+  const modeTag = mode === 'book' ? '📗 বইয়ের প্রশ্ন' : '🤖 AI-নির্মিত';
+
+  document.getElementById('qChapTag').textContent = `${ch.num} · ${modeTag}`;
+  document.getElementById('qProgress').textContent = `প্রশ্ন ${curIdx + 1} / ${activeList.length}`;
+  document.getElementById('qText').textContent = item.q;
+  document.getElementById('fbBox').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const optBox = document.getElementById('optList');
+  optBox.innerHTML = item.options.map((op, i) => `
+    <div class="opt" onclick="selectOption(${i}, this)">
+      <b>${labels[i]})</b> <span>${esc(op)}</span>
     </div>
   `).join('');
 }
 
-function checkAns(qIdx, chosen, correct, el) {
-  const card = document.getElementById(`card-${qIdx}`);
-  if (card.dataset.done) return;
-  card.dataset.done = '1';
+function selectOption(chosenIdx, el) {
+  if (answeredCurrent) return;
+  answeredCurrent = true;
 
-  const opts = card.querySelectorAll('.opt');
-  if (chosen === correct) {
+  const item = activeList[curIdx];
+  const opts = document.getElementById('optList').querySelectorAll('.opt');
+  const fbBox = document.getElementById('fbBox');
+  const fbTitle = document.getElementById('fbTitle');
+
+  if (chosenIdx === item.ans) {
     score++;
     el.classList.add('correct');
+    fbBox.className = 'fb ok';
+    fbTitle.textContent = '✔ সঠিক!';
   } else {
     el.classList.add('wrong');
-    opts[correct].classList.add('correct');
+    opts[item.ans].classList.add('correct');
+    fbBox.className = 'fb bad';
+    fbTitle.textContent = `✘ ভুল। সঠিক উত্তর: ${labels[item.ans]}`;
+    wrongQuestions.push(item);
   }
-  document.getElementById(`exp-${qIdx}`).style.display = 'block';
-  updateScore();
+
+  document.getElementById('fbExp').textContent = item.exp || '';
+  fbBox.style.display = 'block';
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = curIdx + 1 < activeList.length ? 'পরবর্তী প্রশ্ন →' : 'ফলাফল দেখো →';
+  nextBtn.style.display = 'inline-block';
 }
 
-function updateScore() {
-  document.getElementById('scoreBadge').textContent = `স্কোর: ${score} / ${totalQ}`;
+function nextQuestion() {
+  curIdx++;
+  if (curIdx < activeList.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizView').style.display = 'none';
+  document.getElementById('resultView').style.display = 'block';
+
+  const ch = chapters[activeChapIdx];
+  const pct = Math.round((score / activeList.length) * 100);
+  document.getElementById('resChapLabel').textContent = `${ch.num} এর ফলাফল`;
+  document.getElementById('resScoreBig').textContent = `${score} / ${activeList.length} (${pct}%)`;
+  document.getElementById('resMsg').textContent = pct >= 80
+    ? 'দারুণ প্রস্তুতি! এভাবেই চালিয়ে যাও। 🎉'
+    : 'চিন্তা নেই, ব্যাখ্যাগুলো পড়ে আবার চেষ্টা করো। 📖';
+
+  const wrongSec = document.getElementById('wrongSection');
+  const retryWrongBtn = document.getElementById('retryWrongBtn');
+  if (wrongQuestions.length > 0) {
+    wrongSec.style.display = 'block';
+    retryWrongBtn.style.display = 'inline-block';
+    document.getElementById('wrongList').innerHTML = wrongQuestions.map(w => `
+      <div class="wcard">
+        <div class="wq">${esc(w.q)}</div>
+        <div class="wa">✔ সঠিক: ${esc(w.options[w.ans])}</div>
+        <div class="we">${esc(w.exp || '')}</div>
+      </div>
+    `).join('');
+  } else {
+    wrongSec.style.display = 'none';
+    retryWrongBtn.style.display = 'none';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retryFull() {
+  startChapter(activeChapIdx);
+}
+
+function retryWrong() {
+  beginSession([...wrongQuestions]);
 }
 
 function esc(s) {
@@ -228,4 +337,3 @@ renderChapters();
 </script>
 </body>
 </html>
-
