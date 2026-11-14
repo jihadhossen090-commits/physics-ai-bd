@@ -40,10 +40,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { message, chapter, image, history = [], isMcq = false, userApiKey = '' } = req.body;
-  const apiKey = (userApiKey || process.env.GEMINI_API_KEY || '').replace(/[^a-zA-Z0-9_.-]/g, '');
+  const apiKey = (userApiKey || process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY || '').replace(/[^a-zA-Z0-9_.-]/g, '');
 
   if (!apiKey) {
-    return res.status(500).json({ error: 'API Key সেট করা নেই। নিচের 🔑 API Key বাটনে ক্লিক করে Key যোগ করো।' });
+    return res.status(500).json({ error: 'API Key সেট করা নেই। নিচের 🔑 API Key বাটনে ক্লিক করে gsk_... Key যোগ করো।' });
   }
 
   const systemInstruction = `তুমি বাংলাদেশের নবম-দশম (SSC) শ্রেণির NCTB পাঠ্যবই অনুসারে একজন অভিজ্ঞ ও বন্ধুত্বপূর্ণ পদার্থবিজ্ঞান শিক্ষক (PhysiAI)।
@@ -57,53 +57,48 @@ export default async function handler(req, res) {
 3. গাণিতিক সমস্যায় অবশ্যই 'দেওয়া আছে', 'আমরা জানি', মান বসানো এবং শেষে সঠিক এককসহ উত্তর লিখবে।
 4. যদি ব্যবহারকারী MCQ টেস্ট চায়, তবে নির্বাচিত অধ্যায় (বা পুরো বই) থেকে ২৫টি মানসম্মত বোর্ড স্ট্যান্ডার্ড MCQ প্রশ্ন (ক, খ, গ, ঘ অপশনসহ) দেবে এবং একদম নিচে আলাদা করে সঠিক উত্তর ও সংক্ষিপ্ত ব্যাখ্যা দেবে।`;
 
-  const contents = history.map((h) => ({
-    role: h.role === 'user' ? 'user' : 'model',
-    parts: [{ text: h.text }]
-  }));
-
-  const userParts = [];
-  if (image) {
-    const base64Data = image.split(',').at(1);
-    const mimeType = image.split(';').at(0).split(':').at(1);
-    userParts.push({ inlineData: { mimeType, data: base64Data } });
-  }
-
   let promptText = message || '';
   if (chapter) promptText = `[অধ্যায়: ${chapter}]\n${promptText}`;
   if (isMcq) promptText = `${chapter ? chapter + ' অধ্যায়ের' : 'নবম-দশম পদার্থবিজ্ঞানের'} ওপর ২৫টি গুরুত্বপূর্ণ MCQ প্রশ্ন তৈরি করো (উত্তর ও ব্যাখ্যাসহ)।`;
 
-  userParts.push({ text: promptText });
-  contents.push({ role: 'user', parts: userParts });
+  const messages = [{ role: 'system', content: systemInstruction }];
+  for (const h of history.slice(-6)) {
+    messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
+  }
 
-  const payload = {
-    systemInstruction: { parts: [{ text: systemInstruction }] },
-    contents
-  };
+  if (image) {
+    messages.push({
+      role: 'user',
+      content: [
+        { type: 'text', text: promptText || 'ছবির প্রশ্নটি সমাধান করে বুঝিয়ে দাও।' },
+        { type: 'image_url', image_url: { url: image } }
+      ]
+    });
+  } else {
+    messages.push({ role: 'user', content: promptText });
+  }
 
-  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
-  const isVertexKey = apiKey.startsWith('AQ.');
+  const groqModels = image
+    ? ['meta-llama/llama-4-scout-17b-16e-instruct', 'llama-3.2-11b-vision-preview']
+    : ['llama-3.3-70b-versatile', 'meta-llama/llama-4-scout-17b-16e-instruct', 'llama-3.1-8b-instant'];
+
   let lastError = '';
-
-  for (const model of models) {
+  for (const model of groqModels) {
     try {
-      let result;
-      if (isVertexKey) {
-        const host = ['aiplatform', 'googleapis', 'com'].join('.');
-        const path = '/v1/publishers/google/models/' + model + ':generateContent?key=' + apiKey;
-        result = await postJson(host, path, {}, payload);
-      } else {
-        const host = ['generativelanguage', 'googleapis', 'com'].join('.');
-        const path = '/v1beta/models/' + model + ':generateContent';
-        result = await postJson(host, path, { 'x-goog-api-key': apiKey }, payload);
-      }
+      const host = ['api', 'groq', 'com'].join('.');
+      const result = await postJson(
+        host,
+        '/openai/v1/chat/completions',
+        { Authorization: 'Bearer ' + apiKey },
+        { model, messages, temperature: 0.5, max_tokens: 4096 }
+      );
 
       if (!result.ok || result.data.error) {
         lastError = result.data?.error?.message || `HTTP ${result.status}`;
         continue;
       }
 
-      const reply = result.data?.candidates?.at(0)?.content?.parts?.at(0)?.text;
+      const reply = result.data?.choices?.at(0)?.message?.content;
       if (reply) {
         return res.status(200).json({ reply });
       }
@@ -112,5 +107,5 @@ export default async function handler(req, res) {
     }
   }
 
-  return res.status(500).json({ error: 'API ত্রুটি: ' + lastError });
+  return res.status(500).json({ error: 'Groq API ত্রুটি: ' + lastError });
 }
