@@ -194,3 +194,38 @@ function renderQuestions(list) {
           </div>
         `).join('')}
       </div>
+      <div class="exp" id="exp-${qIdx}">💡 <b>ব্যাখ্যা:</b> ${esc(item.exp || '')}</div>
+    </div>
+  `).join('');
+}
+
+function checkAns(qIdx, chosen, correct, el) {
+  const card = document.getElementById(`card-${qIdx}`);
+  if (card.dataset.done) return;
+  card.dataset.done = '1';
+
+  const opts = card.querySelectorAll('.opt');
+  if (chosen === correct) {
+    score++;
+    el.classList.add('correct');
+  } else {
+    el.classList.add('wrong');
+    opts[correct].classList.add('correct');
+  }
+  document.getElementById(`exp-${qIdx}`).style.display = 'block';
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('scoreBadge').textContent = `স্কোর: ${score} / ${totalQ}`;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+renderChapters();
+</script>
+</body>
+</html>
+
