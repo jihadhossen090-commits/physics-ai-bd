@@ -1,18 +1,17 @@
 import https from 'node:https';
 
-function callGemini(path, apiKey, payloadObj) {
+function postJson(hostname, path, headers, payloadObj) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(payloadObj);
-    const host = ['generativelanguage', 'googleapis', 'com'].join('.');
     const req = https.request(
       {
-        hostname: host,
+        hostname,
         path,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey,
-          'Content-Length': Buffer.byteLength(payload)
+          'Content-Length': Buffer.byteLength(payload),
+          ...headers
         }
       },
       (res) => {
@@ -77,16 +76,27 @@ export default async function handler(req, res) {
   userParts.push({ text: promptText });
   contents.push({ role: 'user', parts: userParts });
 
-  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+  const payload = {
+    systemInstruction: { parts: [{ text: systemInstruction }] },
+    contents
+  };
+
+  const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+  const isVertexKey = apiKey.startsWith('AQ.');
   let lastError = '';
 
   for (const model of models) {
     try {
-      const apiPath = '/v1beta/models/' + model + ':generateContent';
-      const result = await callGemini(apiPath, apiKey, {
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        contents
-      });
+      let result;
+      if (isVertexKey) {
+        const host = ['aiplatform', 'googleapis', 'com'].join('.');
+        const path = '/v1/publishers/google/models/' + model + ':generateContent?key=' + apiKey;
+        result = await postJson(host, path, {}, payload);
+      } else {
+        const host = ['generativelanguage', 'googleapis', 'com'].join('.');
+        const path = '/v1beta/models/' + model + ':generateContent';
+        result = await postJson(host, path, { 'x-goog-api-key': apiKey }, payload);
+      }
 
       if (!result.ok || result.data.error) {
         lastError = result.data?.error?.message || `HTTP ${result.status}`;
