@@ -28,7 +28,10 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 .cnum{color:var(--brand);font-weight:700;font-size:.88rem;margin-bottom:4px}
 .ctitle{font-weight:700;font-size:1.05rem;margin-bottom:6px}
 .ccount{color:var(--mute);font-size:.85rem}
-.qmeta{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:.92rem;margin-bottom:14px;font-weight:700}
+.qmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;color:var(--mute);font-size:.92rem;margin-bottom:14px;font-weight:700}
+.timer-pill{background:var(--bub);border:1px solid var(--brand);color:var(--brand);padding:4px 12px;border-radius:999px;font-weight:700}
+.timer-pill.low{background:rgba(220,38,38,.15);border-color:var(--bad);color:var(--bad);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.55}}
 .qtext{font-weight:700;font-size:1.2rem;margin-bottom:18px;line-height:1.5}
 .opts{display:flex;flex-direction:column;gap:10px}
 .opt{padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:1rem;transition:.15s}
@@ -66,7 +69,7 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
   <div id="homeView">
     <a href="index.html" class="pill-btn">← প্রশ্ন করো</a>
     <h1>📘 অধ্যায়ভিত্তিক MCQ টেস্ট</h1>
-    <p class="sub">অধ্যায় বেছে নাও। প্রতিটি উত্তরের পরেই সঠিক উত্তর ও ব্যাখ্যা দেখতে পাবে।</p>
+    <p class="sub">অধ্যায় বেছে নাও। প্রতিটি প্রশ্নের জন্য ১ মিনিট করে অটোমেটিক সময় পাবে।</p>
 
     <div class="tabs">
       <button class="tab active" id="tabBook" onclick="setMode('book')">📗 বইয়ের প্রশ্ন</button>
@@ -74,7 +77,7 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
     </div>
 
     <div class="notice" id="aiNotice">
-      প্রতিবার AI পাঠ্যবইয়ের নোট থেকে ২০টি নতুন প্রশ্ন বানায় (তৈরি হতে ১০–৩০ সেকেন্ড লাগতে পারে)। AI ভুল করতে পারে, তাই উত্তর বইয়ের সাথে মিলিয়ে নিও। (প্রতিদিন সীমিত সংখ্যক বার)
+      প্রতিবার AI পাঠ্যবইয়ের নোট থেকে ২০টি নতুন প্রশ্ন বানায় (সময়: ২০ মিনিট)। AI ভুল করতে পারে, তাই উত্তর বইয়ের সাথে মিলিয়ে নিও।
     </div>
 
     <div class="grid" id="chapGrid"></div>
@@ -87,6 +90,7 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
     <div id="questionArea" style="display:none">
       <div class="qmeta">
         <span id="qChapTag">অধ্যায় ১</span>
+        <span class="timer-pill" id="timerBadge">⏱️ সময় বাকি: 00:00</span>
         <span id="qProgress">প্রশ্ন 1 / 15</span>
       </div>
       <div class="qtext" id="qText"></div>
@@ -108,7 +112,7 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
     </div>
 
     <div id="wrongSection" style="display:none">
-      <h3 style="margin:0 0 12px;font-size:1.05rem">যে প্রশ্নগুলো ভুল হয়েছে</h3>
+      <h3 style="margin:0 0 12px;font-size:1.05rem">যে প্রশ্নগুলো ভুল বা বাদ পড়েছে</h3>
       <div id="wrongList"></div>
     </div>
 
@@ -147,6 +151,9 @@ let curIdx = 0;
 let score = 0;
 let wrongQuestions = [];
 let answeredCurrent = false;
+let timeLeft = 0;
+let timerInterval = null;
+let timeExpired = false;
 
 function renderChapters() {
   const grid = document.getElementById('chapGrid');
@@ -154,7 +161,7 @@ function renderChapters() {
     <div class="ccard" onclick="startChapter(${i})">
       <div class="cnum">${c.num}</div>
       <div class="ctitle">${c.title}</div>
-      <div class="ccount">${mode === 'book' ? c.count + 'টি প্রশ্ন' : '২০টি নতুন AI প্রশ্ন'}</div>
+      <div class="ccount">${mode === 'book' ? c.count + 'টি প্রশ্ন · ' + c.count + ' মিনিট' : '২০টি নতুন AI প্রশ্ন · ২০ মিনিট'}</div>
     </div>
   `).join('');
 }
@@ -168,9 +175,42 @@ function setMode(m) {
 }
 
 function backToChapters() {
+  clearInterval(timerInterval);
   document.getElementById('quizView').style.display = 'none';
   document.getElementById('resultView').style.display = 'none';
   document.getElementById('homeView').style.display = 'block';
+}
+
+function startTimer(totalQuestions) {
+  clearInterval(timerInterval);
+  timeExpired = false;
+  timeLeft = totalQuestions * 60;
+  updateTimerUI();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      updateTimerUI();
+      clearInterval(timerInterval);
+      timeExpired = true;
+      for (let i = curIdx; i < activeList.length; i++) {
+        if (i === curIdx && answeredCurrent) continue;
+        wrongQuestions.push(activeList[i]);
+      }
+      showResult();
+    } else {
+      updateTimerUI();
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+  const s = String(timeLeft % 60).padStart(2, '0');
+  const badge = document.getElementById('timerBadge');
+  badge.textContent = `⏱️ সময় বাকি: ${m}:${s}`;
+  badge.classList.toggle('low', timeLeft <= 60);
 }
 
 async function startChapter(idx) {
@@ -179,6 +219,7 @@ async function startChapter(idx) {
   const savedKey = (localStorage.getItem('gemini_api_key') || '').trim();
   const qCount = mode === 'book' ? ch.count : 20;
 
+  clearInterval(timerInterval);
   document.getElementById('homeView').style.display = 'none';
   document.getElementById('resultView').style.display = 'none';
   document.getElementById('quizView').style.display = 'block';
@@ -228,6 +269,7 @@ function beginSession(list) {
   document.getElementById('resultView').style.display = 'none';
   document.getElementById('quizView').style.display = 'block';
   document.getElementById('questionArea').style.display = 'block';
+  startTimer(activeList.length);
   showQuestion();
 }
 
@@ -286,11 +328,13 @@ function nextQuestion() {
   if (curIdx < activeList.length) {
     showQuestion();
   } else {
+    clearInterval(timerInterval);
     showResult();
   }
 }
 
 function showResult() {
+  clearInterval(timerInterval);
   document.getElementById('quizView').style.display = 'none';
   document.getElementById('resultView').style.display = 'block';
 
@@ -298,9 +342,9 @@ function showResult() {
   const pct = Math.round((score / activeList.length) * 100);
   document.getElementById('resChapLabel').textContent = `${ch.num} এর ফলাফল`;
   document.getElementById('resScoreBig').textContent = `${score} / ${activeList.length} (${pct}%)`;
-  document.getElementById('resMsg').textContent = pct >= 80
-    ? 'দারুণ প্রস্তুতি! এভাবেই চালিয়ে যাও। 🎉'
-    : 'চিন্তা নেই, ব্যাখ্যাগুলো পড়ে আবার চেষ্টা করো। 📖';
+  document.getElementById('resMsg').textContent = timeExpired
+    ? '⏰ নির্ধারিত সময় শেষ হয়ে গেছে! নিচে তোমার ফলাফল দেওয়া হলো।'
+    : (pct >= 80 ? 'দারুণ প্রস্তুতি! এভাবেই চালিয়ে যাও। 🎉' : 'চিন্তা নেই, ব্যাখ্যাগুলো পড়ে আবার চেষ্টা করো। 📖');
 
   const wrongSec = document.getElementById('wrongSection');
   const retryWrongBtn = document.getElementById('retryWrongBtn');
