@@ -184,8 +184,7 @@ function backToChapters() {
 function startTimer(totalQuestions) {
   clearInterval(timerInterval);
   timeExpired = false;
-  // বোর্ড পরীক্ষার নিয়ম অনুযায়ী নির্দিষ্ট ২৫ মিনিটের জন্য ২৫ * ৬০ সেকেন্ড নির্ধারণ করা হলো
-  timeLeft = 25 * 60; 
+  timeLeft = 25 * 60; // নির্দিষ্ট ২৫ মিনিট
   updateTimerUI();
 
   timerInterval = setInterval(() => {
@@ -218,7 +217,6 @@ async function startChapter(idx) {
   activeChapIdx = idx;
   const ch = chapters[idx];
   const savedKey = (localStorage.getItem('gemini_api_key') || '').trim();
-  const qCount = 25; // নির্দিষ্ট ২৫টি প্রশ্ন
 
   clearInterval(timerInterval);
   document.getElementById('homeView').style.display = 'none';
@@ -232,6 +230,7 @@ async function startChapter(idx) {
     ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
     : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
 
+  // প্রম্পট থেকে পৃষ্ঠা নম্বর উল্লেখ করার নির্দেশনা বাদ দেওয়া হয়েছে
   const prompt = `${sourceDesc} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক এবং অবিকল 25টি MCQ প্রশ্ন তৈরি করো। এর কম বা বেশি যেন না হয়।
 শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে (বাইরে কোনো কথা বা markdown লিখবে না):
 [
@@ -239,7 +238,7 @@ async function startChapter(idx) {
     "q": "প্রশ্নটি এখানে লেখো",
     "options": ["ক অপশন", "খ অপশন", "গ অপশন", "ঘ অপশন"],
     "ans": 0,
-    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা ও পাঠ্যবইয়ের অনুচ্ছেদ উল্লেখ করো"
+    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা"
   }
 ]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
@@ -256,7 +255,6 @@ async function startChapter(idx) {
     const raw = data.reply.replace(/```json|```/g, '').trim();
     let list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
     
-    // কঠোরভাবে নিশ্চিত করা যেন ২৫টির বেশি প্রশ্ন না থাকে
     if (list.length > 25) {
       list = list.slice(0, 25);
     }
