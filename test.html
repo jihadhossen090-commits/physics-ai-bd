@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<title>অধ্যায়ভিত্তিক MCQ টেস্ট – PhysiAI</title>
+<title>অধ্যায়ভিত্তিক MCQ টেস্ট – PhysiAI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1d4ed8">
 <style>
@@ -68,30 +68,30 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 <div class="wrap">
   <div id="homeView">
     <a href="index.html" class="pill-btn">← প্রশ্ন করো</a>
-    <h1>📘 অধ্যায়ভিত্তিক MCQ টেস্ট</h1>
-    <p class="sub">অধ্যায় বেছে নাও। প্রতিটি প্রশ্নের জন্য ১ মিনিট করে অটোমেটিক সময় পাবে।</p>
+    <h1>📘 অধ্যায়ভিত্তিক MCQ টেস্ট</h1>
+    <p class="sub">বোর্ড পরীক্ষার নিয়ম অনুযায়ী প্রতিটি অধ্যায়ে নির্দিষ্ট ২৫টি প্রশ্ন এবং অটোমেটিক ২৫ মিনিট সময় পাবে।</p>
 
     <div class="tabs">
-      <button class="tab active" id="tabBook" onclick="setMode('book')">📗 বইয়ের প্রশ্ন</button>
+      <button class="tab active" id="tabBook" onclick="setMode('book')">📗 বইয়ের প্রশ্ন</button>
       <button class="tab" id="tabAi" onclick="setMode('ai')">🤖 AI নতুন প্রশ্ন</button>
     </div>
 
     <div class="notice" id="aiNotice">
-      প্রতিবার AI পাঠ্যবইয়ের নোট থেকে ২০টি নতুন প্রশ্ন বানায় (সময়: ২০ মিনিট)। AI ভুল করতে পারে, তাই উত্তর বইয়ের সাথে মিলিয়ে নিও।
+      প্রতিবার AI পাঠ্যবইয়ের নোট থেকে বোর্ড পরীক্ষার নিয়ম অনুযায়ী নির্দিষ্ট ২৫টি নতুন প্রশ্ন বানায় (সময়: ২৫ মিনিট)। AI ভুল করতে পারে, তাই উত্তর বইয়ের সাথে মিলিয়ে নিও।
     </div>
 
     <div class="grid" id="chapGrid"></div>
   </div>
 
   <div id="quizView" style="display:none">
-    <button class="pill-btn" onclick="backToChapters()">← অধ্যায় তালিকায় ফিরে যাও</button>
+    <button class="pill-btn" onclick="backToChapters()">← অধ্যায় তালিকায় ফিরে যাও</button>
     <div id="loadingBox" style="text-align:center;padding:40px 10px;font-weight:700;color:var(--brand);font-size:1.1rem"></div>
 
     <div id="questionArea" style="display:none">
       <div class="qmeta">
-        <span id="qChapTag">অধ্যায় ১</span>
-        <span class="timer-pill" id="timerBadge">⏱️ সময় বাকি: 00:00</span>
-        <span id="qProgress">প্রশ্ন 1 / 15</span>
+        <span id="qChapTag">অধ্যায় ১</span>
+        <span class="timer-pill" id="timerBadge">⏱️ সময় বাকি: 00:00</span>
+        <span id="qProgress">প্রশ্ন 1 / 25</span>
       </div>
       <div class="qtext" id="qText"></div>
       <div class="opts" id="optList"></div>
@@ -104,42 +104,42 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
   </div>
 
   <div id="resultView" style="display:none">
-    <button class="pill-btn" onclick="backToChapters()">← অধ্যায় তালিকায় ফিরে যাও</button>
+    <button class="pill-btn" onclick="backToChapters()">← অধ্যায় তালিকায় ফিরে যাও</button>
     <div class="res-head">
       <div id="resChapLabel" style="color:var(--mute);font-weight:700"></div>
-      <div class="res-big" id="resScoreBig">0 / 0 (0%)</div>
+      <div class="res-big" id="resScoreBig">0 / 25 (0%)</div>
       <div id="resMsg" style="color:var(--mute)"></div>
     </div>
 
     <div id="wrongSection" style="display:none">
-      <h3 style="margin:0 0 12px;font-size:1.05rem">যে প্রশ্নগুলো ভুল বা বাদ পড়েছে</h3>
+      <h3 style="margin:0 0 12px;font-size:1.05rem">যে প্রশ্নগুলো ভুল বা বাদ পড়েছে</h3>
       <div id="wrongList"></div>
     </div>
 
     <div class="act-row">
       <button class="btn" onclick="retryFull()">আবার টেস্ট দাও</button>
       <button class="btn sec" id="retryWrongBtn" style="display:none" onclick="retryWrong()">ভুলগুলো আবার</button>
-      <button class="btn sec" onclick="backToChapters()">অন্য অধ্যায়</button>
+      <button class="btn sec" onclick="backToChapters()">অন্য অধ্যায়</button>
     </div>
   </div>
 </div>
 
 <script>
 const chapters = [
-  { num: "অধ্যায় ১", title: "ভৌত রাশি ও পরিমাপ", count: 14 },
-  { num: "অধ্যায় ২", title: "গতি", count: 18 },
-  { num: "অধ্যায় ৩", title: "বল", count: 18 },
-  { num: "অধ্যায় ৪", title: "কাজ, ক্ষমতা ও শক্তি", count: 16 },
-  { num: "অধ্যায় ৫", title: "পদার্থের অবস্থা ও চাপ", count: 15 },
-  { num: "অধ্যায় ৬", title: "বস্তুর ওপর তাপের প্রভাব", count: 15 },
-  { num: "অধ্যায় ৭", title: "তরঙ্গ ও শব্দ", count: 16 },
-  { num: "অধ্যায় ৮", title: "আলোর প্রতিফলন", count: 16 },
-  { num: "অধ্যায় ৯", title: "আলোর প্রতিসরণ", count: 16 },
-  { num: "অধ্যায় ১০", title: "স্থির তড়িৎ", count: 14 },
-  { num: "অধ্যায় ১১", title: "চল তড়িৎ", count: 18 },
-  { num: "অধ্যায় ১২", title: "তড়িতের চৌম্বক ক্রিয়া", count: 14 },
-  { num: "অধ্যায় ১৩", title: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", count: 14 },
-  { num: "অধ্যায় ১৪", title: "জীবন বাঁচাতে পদার্থবিজ্ঞান", count: 12 }
+  { num: "অধ্যায় ১", title: "ভৌত রাশি ও পরিমাপ" },
+  { num: "অধ্যায় ২", title: "গতি" },
+  { num: "অধ্যায় ৩", title: "বল" },
+  { num: "অধ্যায় ৪", title: "কাজ, ক্ষমতা ও শক্তি" },
+  { num: "অধ্যায় ৫", title: "পদার্থের অবস্থা ও চাপ" },
+  { num: "অধ্যায় ৬", title: "বস্তুর ওপর তাপের প্রভাব" },
+  { num: "অধ্যায় ৭", title: "তরঙ্গ ও শব্দ" },
+  { num: "অধ্যায় ৮", title: "আলোর প্রতিফলন" },
+  { num: "অধ্যায় ৯", title: "আলোর প্রতিসরণ" },
+  { num: "অধ্যায় ১০", title: "স্থির তড়িৎ" },
+  { num: "অধ্যায় ১১", title: "চল তড়িৎ" },
+  { num: "অধ্যায় ১২", title: "তড়িতের চৌম্বক ক্রিয়া" },
+  { num: "অধ্যায় ১৩", title: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স" },
+  { num: "অধ্যায় ১৪", title: "জীবন বাঁচাতে পদার্থবিজ্ঞান" }
 ];
 
 const labels = ['ক', 'খ', 'গ', 'ঘ'];
@@ -161,7 +161,7 @@ function renderChapters() {
     <div class="ccard" onclick="startChapter(${i})">
       <div class="cnum">${c.num}</div>
       <div class="ctitle">${c.title}</div>
-      <div class="ccount">${mode === 'book' ? c.count + 'টি প্রশ্ন · ' + c.count + ' মিনিট' : '২০টি নতুন AI প্রশ্ন · ২০ মিনিট'}</div>
+      <div class="ccount">২৫টি প্রশ্ন · ২৫ মিনিট</div>
     </div>
   `).join('');
 }
@@ -184,7 +184,8 @@ function backToChapters() {
 function startTimer(totalQuestions) {
   clearInterval(timerInterval);
   timeExpired = false;
-  timeLeft = totalQuestions * 60;
+  // বোর্ড পরীক্ষার নিয়ম অনুযায়ী নির্দিষ্ট ২৫ মিনিটের জন্য ২৫ * ৬০ সেকেন্ড নির্ধারণ করা হলো
+  timeLeft = 25 * 60; 
   updateTimerUI();
 
   timerInterval = setInterval(() => {
@@ -209,7 +210,7 @@ function updateTimerUI() {
   const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
   const s = String(timeLeft % 60).padStart(2, '0');
   const badge = document.getElementById('timerBadge');
-  badge.textContent = `⏱️ সময় বাকি: ${m}:${s}`;
+  badge.textContent = `⏱️ সময় বাকি: ${m}:${s}`;
   badge.classList.toggle('low', timeLeft <= 60);
 }
 
@@ -217,7 +218,7 @@ async function startChapter(idx) {
   activeChapIdx = idx;
   const ch = chapters[idx];
   const savedKey = (localStorage.getItem('gemini_api_key') || '').trim();
-  const qCount = mode === 'book' ? ch.count : 20;
+  const qCount = 25; // নির্দিষ্ট ২৫টি প্রশ্ন
 
   clearInterval(timerInterval);
   document.getElementById('homeView').style.display = 'none';
@@ -225,20 +226,20 @@ async function startChapter(idx) {
   document.getElementById('quizView').style.display = 'block';
   document.getElementById('questionArea').style.display = 'none';
   document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — ${qCount}টি প্রশ্ন তৈরি হচ্ছে... ১০-২০ সেকেন্ড অপেক্ষা করো ⏳`;
+  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — নির্দিষ্ট ২৫টি প্রশ্ন তৈরি হচ্ছে... ১০-২০ সেকেন্ড অপেক্ষা করো ⏳`;
 
   const sourceDesc = mode === 'book'
-    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
-    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
+    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
+    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
 
-  const prompt = `${sourceDesc} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক ${qCount}টি MCQ প্রশ্ন তৈরি করো।
+  const prompt = `${sourceDesc} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক এবং অবিকল 25টি MCQ প্রশ্ন তৈরি করো। এর কম বা বেশি যেন না হয়।
 শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে (বাইরে কোনো কথা বা markdown লিখবে না):
 [
   {
     "q": "প্রশ্নটি এখানে লেখো",
     "options": ["ক অপশন", "খ অপশন", "গ অপশন", "ঘ অপশন"],
     "ans": 0,
-    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা ও পাঠ্যবইয়ের অনুচ্ছেদ উল্লেখ করো"
+    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা ও পাঠ্যবইয়ের অনুচ্ছেদ উল্লেখ করো"
   }
 ]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
@@ -253,10 +254,17 @@ async function startChapter(idx) {
     if (data.error) throw new Error(data.error);
 
     const raw = data.reply.replace(/```json|```/g, '').trim();
-    allQuestions = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
+    let list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
+    
+    // কঠোরভাবে নিশ্চিত করা যেন ২৫টির বেশি প্রশ্ন না থাকে
+    if (list.length > 25) {
+      list = list.slice(0, 25);
+    }
+    
+    allQuestions = list;
     beginSession(allQuestions);
   } catch (e) {
-    document.getElementById('loadingBox').textContent = '⚠️ সমস্যা হয়েছে: ' + e.message;
+    document.getElementById('loadingBox').innerHTML = `⚠️ সমস্যা হয়েছে: ${esc(e.message)}<br><br><button class="btn sec" onclick="backToChapters()">ফিরে যাও</button>`;
   }
 }
 
@@ -277,7 +285,7 @@ function showQuestion() {
   answeredCurrent = false;
   const ch = chapters[activeChapIdx];
   const item = activeList[curIdx];
-  const modeTag = mode === 'book' ? '📗 বইয়ের প্রশ্ন' : '🤖 AI-নির্মিত';
+  const modeTag = mode === 'book' ? '📗 বইয়ের প্রশ্ন' : '🤖 AI-নির্মিত';
 
   document.getElementById('qChapTag').textContent = `${ch.num} · ${modeTag}`;
   document.getElementById('qProgress').textContent = `প্রশ্ন ${curIdx + 1} / ${activeList.length}`;
@@ -301,6 +309,7 @@ function selectOption(chosenIdx, el) {
   const opts = document.getElementById('optList').querySelectorAll('.opt');
   const fbBox = document.getElementById('fbBox');
   const fbTitle = document.getElementById('fbTitle');
+  const fbExp = document.getElementById('fbExp');
 
   if (chosenIdx === item.ans) {
     score++;
@@ -315,7 +324,7 @@ function selectOption(chosenIdx, el) {
     wrongQuestions.push(item);
   }
 
-  document.getElementById('fbExp').textContent = item.exp || '';
+  fbExp.textContent = item.exp ? `ব্যাখ্যা: ${item.exp}` : '';
   fbBox.style.display = 'block';
 
   const nextBtn = document.getElementById('nextBtn');
@@ -343,8 +352,8 @@ function showResult() {
   document.getElementById('resChapLabel').textContent = `${ch.num} এর ফলাফল`;
   document.getElementById('resScoreBig').textContent = `${score} / ${activeList.length} (${pct}%)`;
   document.getElementById('resMsg').textContent = timeExpired
-    ? '⏰ নির্ধারিত সময় শেষ হয়ে গেছে! নিচে তোমার ফলাফল দেওয়া হলো।'
-    : (pct >= 80 ? 'দারুণ প্রস্তুতি! এভাবেই চালিয়ে যাও। 🎉' : 'চিন্তা নেই, ব্যাখ্যাগুলো পড়ে আবার চেষ্টা করো। 📖');
+    ? '⏰ ২৫ মিনিট সময় শেষ হয়ে গেছে! নিচে তোমার ফলাফল দেওয়া হলো।'
+    : (pct >= 80 ? 'দারুণ প্রস্তুতি! এভাবেই চালিয়ে যাও। 🎉' : 'চিন্তা নেই, ব্যাখ্যাগুলো পড়ে আবার চেষ্টা করো। 📖');
 
   const wrongSec = document.getElementById('wrongSection');
   const retryWrongBtn = document.getElementById('retryWrongBtn');
@@ -354,8 +363,8 @@ function showResult() {
     document.getElementById('wrongList').innerHTML = wrongQuestions.map(w => `
       <div class="wcard">
         <div class="wq">${esc(w.q)}</div>
-        <div class="wa">✔ সঠিক: ${esc(w.options[w.ans])}</div>
-        <div class="we">${esc(w.exp || '')}</div>
+        <div class="wa">✔ সঠিক উত্তর: ${esc(w.options[w.ans])}</div>
+        <div class="we">${esc(w.exp ? 'ব্যাখ্যা: ' + w.exp : '')}</div>
       </div>
     `).join('');
   } else {
@@ -374,7 +383,7 @@ function retryWrong() {
 }
 
 function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 renderChapters();
