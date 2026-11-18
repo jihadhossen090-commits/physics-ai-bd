@@ -220,10 +220,9 @@ function strictFilterQuestions(list, chapIdx) {
   const currentChap = chapters[chapIdx];
   const matched = list.filter(item => {
     const text = `${item.q} ${item.options.join(' ')} ${item.exp || ''}`;
-    const hasValidKeyword = currentChap.keywords.some(kw => text.includes(kw));
-    return hasValidKeyword;
+    return currentChap.keywords.some(kw => text.includes(kw));
   });
-  return matched.length >= 10 ? matched.slice(0, 25) : list.slice(0, 25);
+  return matched.length >= 5 ? matched.slice(0, 25) : list.slice(0, 25);
 }
 
 async function startChapter(idx) {
@@ -237,10 +236,10 @@ async function startChapter(idx) {
   document.getElementById('quizView').style.display = 'block';
   document.getElementById('questionArea').style.display = 'none';
   document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — শুধুমাত্র এই অধ্যায়ের সঠিক ২৫টি প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
+  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — শুধুমাত্র এই অধ্যায়ের সঠিক প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
 
   const kwString = ch.keywords.join(', ');
-  const prompt = `তুমি একজন কঠোর ও বিশেষজ্ঞ পদার্থবিজ্ঞান শিক্ষক। একদম নিখুঁতভাবে নিচের নির্দেশ মানো:
+  const prompt = `তুমি একজন কঠোর ও বিশেষজ্ঞ পদার্থবিজ্ঞান শিক্ষক। নিখুঁতভাবে নিচের নির্দেশ মানো:
 ১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের নির্দিষ্ট বিষয়বস্তু (${kwString}) এর ওপর ভিত্তি করে প্রশ্ন তৈরি করবে। অন্য কোনো অধ্যায়ের কোনো প্রশ্ন বা শব্দ আনা কঠোরভাবে নিষিদ্ধ।
 ২. এই অধ্যায় থেকে ঠিক এবং অবিকল ২৫টি (25) MCQ প্রশ্ন তৈরি করো।
 ৩. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত লিখবে না:
@@ -267,9 +266,7 @@ async function startChapter(idx) {
     let list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
     
     list = strictFilterQuestions(list, idx);
-    
-    allQuestions = list;
-    beginSession(allQuestions);
+    beginSession(list);
   } catch (e) {
     document.getElementById('loadingBox').innerHTML = `⚠️ সমস্যা হয়েছে: ${esc(e.message)}<br><br><button class="btn sec" onclick="backToChapters()">ফিরে যাও</button>`;
   }
@@ -335,7 +332,14 @@ function selectOption(chosenIdx, el) {
   fbBox.style.display = 'block';
 
   const nextBtn = document.getElementById('nextBtn');
-  nextBtn.textContent = curIdx + 1 < activeList.length ? 'পরবর্তী প্রশ্ন →' : 'ফলাফল দেখো →';
+  // ফিক্সড: শেষ প্রশ্ন হলে 'ফলাফল দেখো →' দেখাবে এবং ক্লিক করলে সরাসরি showResult() কল হবে
+  if (curIdx + 1 < activeList.length) {
+    nextBtn.textContent = 'পরবর্তী প্রশ্ন →';
+    nextBtn.onclick = nextQuestion;
+  } else {
+    nextBtn.textContent = 'ফলাফল দেখো →';
+    nextBtn.onclick = showResult;
+  }
   nextBtn.style.display = 'inline-block';
 }
 
@@ -344,7 +348,6 @@ function nextQuestion() {
   if (curIdx < activeList.length) {
     showQuestion();
   } else {
-    clearInterval(timerInterval);
     showResult();
   }
 }
