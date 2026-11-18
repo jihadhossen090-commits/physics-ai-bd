@@ -236,19 +236,20 @@ async function startChapter(idx) {
   document.getElementById('quizView').style.display = 'block';
   document.getElementById('questionArea').style.display = 'none';
   document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — শুধুমাত্র এই অধ্যায়ের সঠিক প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
+  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — পাঠ্যবইয়ের সঠিক ও নির্ভুল প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
 
   const kwString = ch.keywords.join(', ');
-  const prompt = `তুমি একজন কঠোর ও বিশেষজ্ঞ পদার্থবিজ্ঞান শিক্ষক। নিখুঁতভাবে নিচের নির্দেশ মানো:
-১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের নির্দিষ্ট বিষয়বস্তু (${kwString}) এর ওপর ভিত্তি করে প্রশ্ন তৈরি করবে। অন্য কোনো অধ্যায়ের কোনো প্রশ্ন বা শব্দ আনা কঠোরভাবে নিষিদ্ধ।
-২. এই অধ্যায় থেকে ঠিক এবং অবিকল ২৫টি (25) MCQ প্রশ্ন তৈরি করো।
-৩. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত লিখবে না:
+  const prompt = `তুমি একজন অত্যন্ত অভিজ্ঞ এবং কঠোর পদার্থবিজ্ঞান শিক্ষক। নিচের নিয়মগুলো নিখুঁতভাবে মেনে চলো:
+১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের মূল পাঠ্যবইয়ের নির্ধারিত বিষয়বস্তু (${kwString}) থেকে প্রশ্ন তৈরি করবে। কোনো অবস্থাতেই অন্য অধ্যায়ের তথ্য মিশ্রণ করা যাবে না।
+২. প্রশ্ন এবং অপশনগুলো সম্পূর্ণ নির্ভুল হতে হবে এবং পাঠ্যবইয়ের বৈজ্ঞানিক বা তাত্ত্বিক তথ্যের সাথে ১০০% মিল থাকতে হবে। কোনো ভুল তথ্য বা ভুয়া অপশন দেওয়া যাবে না।
+৩. এই অধ্যায় থেকে ঠিক এবং অবিকল ২৫টি (25) MCQ প্রশ্ন তৈরি করো।
+৪. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত বা Markdown লিখবে না:
 [
   {
     "q": "প্রশ্নটি এখানে লেখো",
     "options": ["ক অপশন", "খ অপশন", "গ অপশন", "ঘ অপশন"],
     "ans": 0,
-    "exp": "সঠিক উত্তরটির সহজ ব্যাখ্যা"
+    "exp": "পাঠ্যবইয়ের তথ্যের আলোকে সঠিক ও নির্ভুল ব্যাখ্যা"
   }
 ]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
@@ -332,7 +333,6 @@ function selectOption(chosenIdx, el) {
   fbBox.style.display = 'block';
 
   const nextBtn = document.getElementById('nextBtn');
-  // ফিক্সড: শেষ প্রশ্ন হলে 'ফলাফল দেখো →' দেখাবে এবং ক্লিক করলে সরাসরি showResult() কল হবে
   if (curIdx + 1 < activeList.length) {
     nextBtn.textContent = 'পরবর্তী প্রশ্ন →';
     nextBtn.onclick = nextQuestion;
