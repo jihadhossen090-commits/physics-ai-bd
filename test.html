@@ -157,6 +157,7 @@ let timeExpired = false;
 
 function renderChapters() {
   const grid = document.getElementById('chapGrid');
+  if (!grid) return;
   grid.innerHTML = chapters.map((c, i) => `
     <div class="ccard" onclick="startChapter(${i})">
       <div class="cnum">${c.num}</div>
@@ -209,8 +210,10 @@ function updateTimerUI() {
   const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
   const s = String(timeLeft % 60).padStart(2, '0');
   const badge = document.getElementById('timerBadge');
-  badge.textContent = `⏱️ সময় বাকি: ${m}:${s}`;
-  badge.classList.toggle('low', timeLeft <= 60);
+  if (badge) {
+    badge.textContent = `⏱️ সময় বাকি: ${m}:${s}`;
+    badge.classList.toggle('low', timeLeft <= 60);
+  }
 }
 
 async function startChapter(idx) {
@@ -326,7 +329,7 @@ function selectOption(chosenIdx, el) {
   fbExp.textContent = item.exp ? `ব্যাখ্যা: ${item.exp}` : '';
   fbBox.style.display = 'block';
 
-  const nextBtn =.document ? document.getElementById('nextBtn') : document.getElementById('nextBtn');
+  const nextBtn = document.getElementById('nextBtn');
   nextBtn.textContent = curIdx + 1 < activeList.length ? 'পরবর্তী প্রশ্ন →' : 'ফলাফল দেখো →';
   nextBtn.style.display = 'inline-block';
 }
@@ -385,6 +388,7 @@ function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// পেজ লোড হওয়ার সাথে সাথেই যাতে চ্যাপ্টারগুলো রেন্ডার হয়
 renderChapters();
 </script>
 </body>
