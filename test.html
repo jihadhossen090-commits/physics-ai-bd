@@ -227,11 +227,12 @@ async function startChapter(idx) {
   document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — নির্দিষ্ট ২৫টি প্রশ্ন তৈরি হচ্ছে... ১০-২০ সেকেন্ড অপেক্ষা করো ⏳`;
 
   const sourceDesc = mode === 'book'
-    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
-    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
+    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের নির্দিষ্ট অধ্যায়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
+    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নির্দিষ্ট অধ্যায়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
 
-  // প্রম্পট থেকে পৃষ্ঠা নম্বর উল্লেখ করার নির্দেশনা বাদ দেওয়া হয়েছে
-  const prompt = `${sourceDesc} "${ch.num}: ${ch.title}" অধ্যায় থেকে ঠিক এবং অবিকল 25টি MCQ প্রশ্ন তৈরি করো। এর কম বা বেশি যেন না হয়।
+  const prompt = `তুমি একজন বিশেষজ্ঞ পদার্থবিজ্ঞান শিক্ষক। নিচে দেওয়া নির্দিষ্ট অধ্যায়টি ছাড়া অন্য কোনো অধ্যায় থেকে কোনো প্রশ্ন আনবে না।
+${sourceDesc} "${ch.num}: ${ch.title}" অধ্যায় থেকে শুধুমাত্র এই অধ্যায়ের বিষয়বস্তুর ওপর ভিত্তি করে ঠিক এবং অবিকল 25টি MCQ প্রশ্ন তৈরি করো। এর বাইরে অন্য কোনো অধ্যায়ের প্রশ্ন মিশ্রণ করা কঠোরভাবে নিষিদ্ধ। ঠিক ২৫টি প্রশ্নই হতে হবে।
+
 শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে (বাইরে কোনো কথা বা markdown লিখবে না):
 [
   {
@@ -325,7 +326,7 @@ function selectOption(chosenIdx, el) {
   fbExp.textContent = item.exp ? `ব্যাখ্যা: ${item.exp}` : '';
   fbBox.style.display = 'block';
 
-  const nextBtn = document.getElementById('nextBtn');
+  const nextBtn =.document ? document.getElementById('nextBtn') : document.getElementById('nextBtn');
   nextBtn.textContent = curIdx + 1 < activeList.length ? 'পরবর্তী প্রশ্ন →' : 'ফলাফল দেখো →';
   nextBtn.style.display = 'inline-block';
 }
