@@ -216,17 +216,14 @@ function updateTimerUI() {
   }
 }
 
-function filterChapterQuestions(list, chapIdx) {
+function strictFilterQuestions(list, chapIdx) {
   const currentChap = chapters[chapIdx];
-  const otherKeywords = chapters.filter((_, idx) => idx !== chapIdx).flatMap(c => c.keywords);
-  const filtered = list.filter(item => {
-    const fullText = `${item.q} ${item.options.join(' ')} ${item.exp || ''}`;
-    const hasCurrentKw = currentChap.keywords.some(kw => fullText.includes(kw));
-    const hasOtherKw = otherKeywords.some(kw => fullText.includes(kw));
-    if (hasOtherKw && !hasCurrentKw) return false;
-    return true;
+  const matched = list.filter(item => {
+    const text = `${item.q} ${item.options.join(' ')} ${item.exp || ''}`;
+    const hasValidKeyword = currentChap.keywords.some(kw => text.includes(kw));
+    return hasValidKeyword;
   });
-  return filtered.length >= 15 ? filtered.slice(0, 25) : list.slice(0, 25);
+  return matched.length >= 10 ? matched.slice(0, 25) : list.slice(0, 25);
 }
 
 async function startChapter(idx) {
@@ -240,17 +237,13 @@ async function startChapter(idx) {
   document.getElementById('quizView').style.display = 'block';
   document.getElementById('questionArea').style.display = 'none';
   document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — নির্দিষ্ট ২৫টি প্রশ্ন তৈরি হচ্ছে... ১০-২০ সেকেন্ড অপেক্ষা করো ⏳`;
+  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — শুধুমাত্র এই অধ্যায়ের সঠিক ২৫টি প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
 
-  const sourceDesc = mode === 'book'
-    ? 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান মূল পাঠ্যবইয়ের নির্দিষ্ট অধ্যায়ের অনুশীলনী ও বোর্ড পরীক্ষায় আসা'
-    : 'বাংলাদেশের নবম-দশম শ্রেণির NCTB পদার্থবিজ্ঞান পাঠ্যবইয়ের নির্দিষ্ট অধ্যায়ের নোট থেকে সম্পূর্ণ নতুন, গাণিতিক ও সৃজনশীল';
-
-  const prompt = `তুমি একজন কঠোর ও বিশেষজ্ঞ পদার্থবিজ্ঞান শিক্ষক। নিচের নির্দেশাবলী নিখুঁতভাবে মেনে চলো:
-১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের নির্দিষ্ট পাঠ্যসূচি থেকে প্রশ্ন তৈরি করবে।
-২. অন্য কোনো অধ্যায় থেকে কোনো প্রশ্ন বা ধারণা মিশ্রণ করা সম্পূর্ণ নিষিদ্ধ।
-৩. ${sourceDesc} এই অধ্যায় থেকে ঠিক এবং অবিকল 25টি MCQ প্রশ্ন তৈরি করো। এর কম বা বেশি যেন না হয়।
-৪. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে (বাইরে কোনো কথা বা markdown লিখবে না):
+  const kwString = ch.keywords.join(', ');
+  const prompt = `তুমি একজন কঠোর ও বিশেষজ্ঞ পদার্থবিজ্ঞান শিক্ষক। একদম নিখুঁতভাবে নিচের নির্দেশ মানো:
+১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের নির্দিষ্ট বিষয়বস্তু (${kwString}) এর ওপর ভিত্তি করে প্রশ্ন তৈরি করবে। অন্য কোনো অধ্যায়ের কোনো প্রশ্ন বা শব্দ আনা কঠোরভাবে নিষিদ্ধ।
+২. এই অধ্যায় থেকে ঠিক এবং অবিকল ২৫টি (25) MCQ প্রশ্ন তৈরি করো।
+৩. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত লিখবে না:
 [
   {
     "q": "প্রশ্নটি এখানে লেখো",
@@ -273,7 +266,7 @@ async function startChapter(idx) {
     const raw = data.reply.replace(/```json|```/g, '').trim();
     let list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
     
-    list = filterChapterQuestions(list, idx);
+    list = strictFilterQuestions(list, idx);
     
     allQuestions = list;
     beginSession(allQuestions);
