@@ -32,7 +32,7 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 .timer-pill{background:var(--bub);border:1px solid var(--brand);color:var(--brand);padding:4px 12px;border-radius:999px;font-weight:700}
 .timer-pill.low{background:rgba(220,38,38,.15);border-color:var(--bad);color:var(--bad);animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.55}}
-.qtext{font-weight:700;font-size:1.2rem;margin-bottom:18px;line-height:1.5}
+.qtext{font-weight:700;font-size:1.2rem;margin-bottom:18px;line-height:1.6;white-space:pre-line}
 .opts{display:flex;flex-direction:column;gap:10px}
 .opt{padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:1rem;transition:.15s}
 .opt:hover{border-color:var(--brand)}
@@ -47,7 +47,7 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 .res-head{margin-bottom:20px}
 .res-big{font-size:2.1rem;font-weight:700;color:var(--brand);margin:6px 0}
 .wcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
-.wcard .wq{font-weight:700;margin-bottom:6px}
+.wcard .wq{font-weight:700;margin-bottom:6px;white-space:pre-line}
 .wcard .wa{color:var(--ok);font-weight:700;font-size:.92rem;margin-bottom:4px}
 .wcard .we{color:var(--mute);font-size:.88rem}
 .act-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
@@ -127,8 +127,8 @@ h1{margin:0 0 6px;font-size:1.65rem;display:flex;align-items:center;gap:10px}
 <script>
 const chapters = [
   { num: "অধ্যায় ১", title: "ভৌত রাশি ও পরিমাপ", keywords: ["ভৌত রাশি", "পরিমাপ", "মৌলিক রাশি", "লব্ধ রাশি", "এসআই একক", "মাত্রা", "স্লাইড ক্যালিপার্স", "স্ক্রু গেজ", "ব্যারোমিটার", "মাপাঝোক", "পরিমাপের ত্রুটি", "ভার্নিয়ার ধ্রুবক"] },
-  { num: "অধ্যায় ২", title: "গতি", keywords: ["গতি", "স্থিরতা", "দূরত্ব", "সরণ", "দ্রুতি", "বেগ", "ত্বরণ", "মন্থরতা", "গতির সমীকরণ", "সুষম গতি", "অসম গতি", "গ্রাফ", "পড়ন্ত বস্তু"] },
-  { num: "অধ্যায় ৩", title: "বল", keywords: ["বল", "নিউটনের প্রথম সূত্র", "নিউটনের দ্বিতীয় সূত্র", "নিউটনের তৃতীয় সূত্র", "জড়তা", "ভরবেগ", "ঘর্ষণ", "ক্রিয়া ও প্রতিক্রিয়া", "ভারসাম্য", "টর্ক", "কেন্দ্রমুখী বল"] },
+  { num: "অধ্যায় ২", title: "গতি", keywords: ["গতি", "স্থিরতা", "দূরত্ব", "সরণ", "দ্রুতি", "বেগ", "ত্বরণ", "মন্থরতা", "গতির সমীকরণ", "সুষম গতি", "অসম গতি", "গ্রাফ", "পড়ন্ত বস্তু"] },
+  { num: "অধ্যায় ৩", title: "বল", keywords: ["বল", "নিউটনের প্রথম সূত্র", "নিউটনের দ্বিতীয় সূত্র", "নিউটনের তৃতীয় সূত্র", "জড়তা", "ভরবেগ", "ঘর্ষণ", "ক্রিয়া ও প্রতিক্রিয়া", "ভারসাম্য", "টর্ক", "কেন্দ্রমুখী বল"] },
   { num: "অধ্যায় ৪", title: "কাজ, ক্ষমতা ও শক্তি", keywords: ["কাজ", "ক্ষমতা", "শক্তি", "গতিশক্তি", "বিভবশক্তি", "কর্মদক্ষতা", "শক্তি রূপান্তর", "বিকল্প শক্তি", "বায়োমাস", "বায়ুশক্তি", "সৌরশক্তি"] },
   { num: "অধ্যায় ৫", title: "পদার্থের অবস্থা ও চাপ", keywords: ["চাপ", "প্যাসকেলের সূত্র", "আর্কিমিডিস", "প্লবতা", "বায়ুমণ্ডলীয় চাপ", "টরিৎসেলি", "ঘনত্ব", "স্থিতিস্থাপকতা", "হুকের সূত্র", "তরলের চাপ"] },
   { num: "অধ্যায় ৬", title: "বস্তুর ওপর তাপের প্রভাব", keywords: ["তাপ", "উষ্ণতা", "থার্মোমিটার", "তাপমাত্রা", "প্রসারণ", "ক্যালোরিমিতি", "বাষ্পীভবন", "গলন", "আপেক্ষিক তাপ", "লীন তাপ"] },
@@ -216,13 +216,49 @@ function updateTimerUI() {
   }
 }
 
-function strictFilterQuestions(list, chapIdx) {
+function cleanText(str) {
+  return String(str || '')
+    .replace(/\uFFFD+/g, '')
+    .replace(/(?:^|\n)\s*iv\.\s*[^\n]*/gi, '')
+    .replace(/\s*,?\s*ও\s*iv\b/gi, '')
+    .trim();
+}
+
+function isMultiStatement(item) {
+  const combined = `${item.q} ${item.options.join(' ')}`;
+  return /\bi\.\s*/i.test(combined) && /\bii\.\s*/i.test(combined);
+}
+
+function balanceQuestions(list, chapIdx) {
   const currentChap = chapters[chapIdx];
-  const matched = list.filter(item => {
-    const text = `${item.q} ${item.options.join(' ')} ${item.exp || ''}`;
+  const cleaned = list
+    .filter(item => item && typeof item.q === 'string' && Array.isArray(item.options) && item.options.length === 4)
+    .map(item => ({
+      q: cleanText(item.q),
+      options: item.options.map(op => cleanText(op)),
+      ans: Number.isInteger(item.ans) && item.ans >= 0 && item.ans <= 3 ? item.ans : 0,
+      exp: cleanText(item.exp || '')
+    }))
+    .filter(item => item.q.length > 0 && item.options.every(op => op.length > 0));
+
+  const multiPool = cleaned.filter(isMultiStatement);
+  const singlePool = cleaned.filter(item => !isMultiStatement(item));
+
+  const matchedSingle = singlePool.filter(item => {
+    const text = `${item.q} ${item.options.join(' ')} ${item.exp}`;
     return currentChap.keywords.some(kw => text.includes(kw));
   });
-  return matched.length >= 5 ? matched.slice(0, 25) : list.slice(0, 25);
+
+  const finalSingles = (matchedSingle.length >= 10 ? matchedSingle : singlePool).slice(0, 20);
+  const finalMultis = multiPool.slice(0, 5);
+
+  const combined = [...finalSingles];
+  finalMultis.forEach((mq, idx) => {
+    const insertAt = Math.min(combined.length, Math.floor(((idx + 1) * combined.length) / (finalMultis.length + 1)));
+    combined.splice(insertAt, 0, mq);
+  });
+
+  return combined.slice(0, 25);
 }
 
 async function startChapter(idx) {
@@ -236,22 +272,17 @@ async function startChapter(idx) {
   document.getElementById('quizView').style.display = 'block';
   document.getElementById('questionArea').style.display = 'none';
   document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — পাঠ্যবইয়ের সঠিক ও নির্ভুল প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
+  document.getElementById('loadingBox').textContent = `${ch.num}: ${ch.title} — পাঠ্যবইয়ের সঠিক ও নির্ভুল প্রশ্ন তৈরি হচ্ছে... অপেক্ষা করুন ⏳`;
 
   const kwString = ch.keywords.join(', ');
-  const prompt = `তুমি একজন অত্যন্ত অভিজ্ঞ এবং কঠোর পদার্থবিজ্ঞান শিক্ষক। নিচের নিয়মগুলো নিখুঁতভাবে মেনে চলো:
-১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের মূল পাঠ্যবইয়ের নির্ধারিত বিস্তারিত বিষয়বস্তু ও বৈজ্ঞানিক টার্ম (${kwString}) থেকে প্রশ্ন তৈরি করবে। অন্য কোনো অধ্যায়ের তথ্য মিশ্রণ করা কঠোরভাবে নিষিদ্ধ।
-২. প্রশ্ন এবং অপশনগুলো সম্পূর্ণ নির্ভুল হতে হবে এবং নবম-দশম শ্রেণির NCTB পাঠ্যবইয়ের বৈজ্ঞানিক বা তাত্ত্বিক তথ্যের সাথে ১০০% মিল থাকতে হবে। কোনো ভুল তথ্য দেওয়া যাবে না।
+  const prompt = `তুমি একজন অত্যন্ত অভিজ্ঞ এবং কঠোর পদার্থবিজ্ঞান শিক্ষক। নিচের নিয়মগুলো নিখুঁতভাবে মেনে চলো:
+১. শুধুমাত্র এবং কেবলমাত্র "${ch.num}: ${ch.title}" অধ্যায়ের মূল পাঠ্যবইয়ের নির্ধারিত বিস্তারিত বিষয়বস্তু ও বৈজ্ঞানিক টার্ম (${kwString}) থেকে প্রশ্ন তৈরি করবে। অন্য কোনো অধ্যায়ের তথ্য মিশ্রণ করা কঠোরভাবে নিষিদ্ধ।
+২. প্রশ্ন, অপশন এবং ব্যাখ্যা সম্পূর্ণ নির্ভুল হতে হবে এবং নবম-দশম শ্রেণির NCTB পাঠ্যবইয়ের বৈজ্ঞানিক বা তাত্ত্বিক তথ্যের সাথে ১০০% মিল থাকতে হবে। কোনো ভুল তথ্য, ভাঙা অক্ষর, ভুয়া অপশন বা বিভ্রান্তিকর ব্যাখ্যা দেওয়া যাবে না।
 ৩. এই অধ্যায় থেকে ঠিক এবং অবিকল ২৫টি (25) MCQ প্রশ্ন তৈরি করো।
-৪. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত বা Markdown লিখবে না:
-[
-  {
-    "q": "প্রশ্নটি এখানে লেখো",
-    "options": ["ক অপশন", "খ অপশন", "গ অপশন", "ঘ অপশন"],
-    "ans": 0,
-    "exp": "পাঠ্যবইয়ের তথ্যের আলোকে সঠিক ও নির্ভুল ব্যাখ্যা"
-  }
-]
+৪. ২৫টি প্রশ্নের মধ্যে ঠিক ৫টি (5টি) প্রশ্ন অবশ্যই "বহুপদী সমাপ্তিসূচক MCQ" হতে হবে। বহুপদী প্রশ্নে শুধু ৩টি রোমান পয়েন্ট থাকবে: "i.", "ii.", "iii." (কখনোই "iv." দেবে না) এবং অপশনগুলো হবে "i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii" ধরনের। বাকি ২০টি প্রশ্ন সাধারণ একক MCQ হবে।
+৫. বহুপদী প্রশ্নের "q" ফিল্ডে মূল প্রশ্ন এবং i., ii., iii. পয়েন্টগুলো নতুন লাইন (\\n) দিয়ে সুন্দরভাবে সাজিয়ে লিখবে (উদাহরণ: "নিচের কোন তথ্যগুলো সঠিক?\\ni. প্রথম তথ্য\\nii. দ্বিতীয় তথ্য\\niii. তৃতীয় তথ্য")।
+৬. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত বা Markdown লিখবে না:
+[{"q":"প্রশ্ন","options":["ক","খ","গ","ঘ"],"ans":0,"exp":"পাঠ্যবইয়ের তথ্যের আলোকে সঠিক ও নির্ভুল ব্যাখ্যা"}]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
 
   try {
@@ -265,8 +296,8 @@ async function startChapter(idx) {
 
     const raw = data.reply.replace(/```json|```/g, '').trim();
     let list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
-    
-    list = strictFilterQuestions(list, idx);
+
+    list = balanceQuestions(list, idx);
     beginSession(list);
   } catch (e) {
     document.getElementById('loadingBox').innerHTML = `⚠️ সমস্যা হয়েছে: ${esc(e.message)}<br><br><button class="btn sec" onclick="backToChapters()">ফিরে যাও</button>`;
