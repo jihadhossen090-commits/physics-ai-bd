@@ -145,7 +145,6 @@ const chapters = [
 const labels = ['ক', 'খ', 'গ', 'ঘ'];
 let mode = 'book';
 let activeChapIdx = 0;
-let allQuestions = [];
 let activeList = [];
 let curIdx = 0;
 let score = 0;
@@ -216,6 +215,137 @@ function updateTimerUI() {
   }
 }
 
+function repairJsonText(jsonStr) {
+  let out = '';
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < jsonStr.length; i++) {
+    const ch = jsonStr[i];
+
+    if (escaped) {
+      if (!/["\\/bfnrtu]/.test(ch)) {
+        out = out.slice(0, -1) + '\\\\' + ch;
+      } else {
+        out += ch;
+      }
+      escaped = false;
+      continue;
+    }
+
+    if (ch === '\\') {
+      if (!inString) {
+        out += '\\\\';
+      } else {
+        out += ch;
+        escaped = true;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      if (!inString) {
+        inString = true;
+        out += ch;
+      } else {
+        let j = i + 1;
+        while (j < jsonStr.length && /\s/.test(jsonStr[j])) j++;
+        const nextChar = jsonStr[j];
+        if (
+          nextChar === ':' ||
+          nextChar === ',' ||
+          nextChar === ']' ||
+          nextChar === '}' ||
+          j >= jsonStr.length
+        ) {
+          inString = false;
+          out += ch;
+        } else {
+          out += '\\"';
+        }
+      }
+      continue;
+    }
+
+    if (inString && (ch === '\n' || ch === '\r')) {
+      if (ch === '\r' && jsonStr[i + 1] === '\n') i++;
+      out += '\\n';
+      continue;
+    }
+
+    out += ch;
+  }
+
+  if (inString) out += '"';
+
+  return out
+    .replace(/"\s+"/g, '", "')
+    .replace(/([\]}"0-9eE])\s*\n?\s*([\[{"])/g, (match, prev, curr) => {
+      if ((prev === ':' || prev === ',') || (curr === ':' || curr === ',')) return match;
+      if (prev === '{' || prev === '[') return match;
+      return `${prev}, ${curr}`;
+    })
+    .replace(/,\s*([\]}])/g, '$1');
+}
+
+function extractQuestionObjects(text) {
+  const results = [];
+  let depth = 0;
+  let start = -1;
+  let inStr = false;
+  let esc = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (esc) { esc = false; continue; }
+    if (c === '\\') { esc = true; continue; }
+    if (c === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+
+    if (c === '{') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (c === '}') {
+      depth--;
+      if (depth === 0 && start !== -1) {
+        const chunk = text.slice(start, i + 1).replace(/,\s*([\]}])/g, '$1');
+        try {
+          const obj = JSON.parse(chunk);
+          if (obj && typeof obj.q === 'string' && Array.isArray(obj.options)) {
+            results.push(obj);
+          }
+        } catch (_) {}
+        start = -1;
+      }
+    }
+  }
+  return results;
+}
+
+function parseAiQuestions(replyText) {
+  let raw = String(replyText || '').replace(/```json|```/gi, '').trim();
+  const firstBracket = raw.indexOf('[');
+  if (firstBracket !== -1) {
+    const lastBracket = raw.lastIndexOf(']');
+    raw = lastBracket > firstBracket
+      ? raw.slice(firstBracket, lastBracket + 1)
+      : raw.slice(firstBracket);
+  }
+
+  const repaired = repairJsonText(raw);
+
+  try {
+    const parsed = JSON.parse(repaired);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (parsed && Array.isArray(parsed.questions) && parsed.questions.length > 0) return parsed.questions;
+  } catch (_) {}
+
+  const extracted = extractQuestionObjects(repaired);
+  if (extracted.length > 0) return extracted;
+
+  throw new Error('AI থেকে পাঠানো প্রশ্নের ফরম্যাট পড়া যায়নি। আবার চেষ্টা করুন।');
+}
+
 function cleanText(str) {
   return String(str || '')
     .replace(/\uFFFD+/g, '')
@@ -231,14 +361,18 @@ function isMultiStatement(item) {
 
 function balanceQuestions(list, chapIdx) {
   const currentChap = chapters[chapIdx];
-  const cleaned = list
-    .filter(item => item && typeof item.q === 'string' && Array.isArray(item.options) && item.options.length === 4)
-    .map(item => ({
-      q: cleanText(item.q),
-      options: item.options.map(op => cleanText(op)),
-      ans: Number.isInteger(item.ans) && item.ans >= 0 && item.ans <= 3 ? item.ans : 0,
-      exp: cleanText(item.exp || '')
-    }))
+  const cleaned = (Array.isArray(list) ? list : [])
+    .filter(item => item && typeof item.q === 'string' && Array.isArray(item.options) && item.options.length >= 2)
+    .map(item => {
+      const opts = item.options.slice(0, 4).map(op => cleanText(op));
+      while (opts.length < 4) opts.push('কোনোটিই নয়');
+      return {
+        q: cleanText(item.q),
+        options: opts,
+        ans: Number.isInteger(item.ans) && item.ans >= 0 && item.ans <= 3 ? item.ans : 0,
+        exp: cleanText(item.exp || '')
+      };
+    })
     .filter(item => item.q.length > 0 && item.options.every(op => op.length > 0));
 
   const multiPool = cleaned.filter(isMultiStatement);
@@ -282,7 +416,7 @@ async function startChapter(idx) {
 ৪. ২৫টি প্রশ্নের মধ্যে ঠিক ৫টি (5টি) প্রশ্ন অবশ্যই "বহুপদী সমাপ্তিসূচক MCQ" হতে হবে। বহুপদী প্রশ্নে শুধু ৩টি রোমান পয়েন্ট থাকবে: "i.", "ii.", "iii." (কখনোই "iv." দেবে না) এবং অপশনগুলো হবে "i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii" ধরনের। বাকি ২০টি প্রশ্ন সাধারণ একক MCQ হবে।
 ৫. বহুপদী প্রশ্নের "q" ফিল্ডে মূল প্রশ্ন এবং i., ii., iii. পয়েন্টগুলো নতুন লাইন (\\n) দিয়ে সুন্দরভাবে সাজিয়ে লিখবে (উদাহরণ: "নিচের কোন তথ্যগুলো সঠিক?\\ni. প্রথম তথ্য\\nii. দ্বিতীয় তথ্য\\niii. তৃতীয় তথ্য")।
 ৬. শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দেবে, বাইরে একটি অক্ষরও অতিরিক্ত বা Markdown লিখবে না:
-[{"q":"প্রশ্ন","options":["ক","খ","গ","ঘ"],"ans":0,"exp":"পাঠ্যবইয়ের তথ্যের আলোকে সঠিক ও নির্ভুল ব্যাখ্যা"}]
+[{"q":"প্রশ্ন","options":["ক অপশন","খ অপশন","গ অপশন","ঘ অপশন"],"ans":0,"exp":"পাঠ্যবইয়ের তথ্যের আলোকে সঠিক ও নির্ভুল ব্যাখ্যা"}]
 এখানে "ans" হলো সঠিক অপশনের ইনডেক্স (0, 1, 2, অথবা 3)।`;
 
   try {
@@ -294,10 +428,7 @@ async function startChapter(idx) {
     const data = await res.json();
     if (data.error) throw new Error(data.error);
 
-    const raw = data.reply.replace(/```json|```/g, '').trim();
-    let list = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1));
-
-    list = balanceQuestions(list, idx);
+    const list = balanceQuestions(parseAiQuestions(data.reply), idx);
     beginSession(list);
   } catch (e) {
     document.getElementById('loadingBox').innerHTML = `⚠️ সমস্যা হয়েছে: ${esc(e.message)}<br><br><button class="btn sec" onclick="backToChapters()">ফিরে যাও</button>`;
