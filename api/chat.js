@@ -236,7 +236,7 @@ export default async function handler(req, res) {
     promptText = `[অধ্যায়: ${chapter}]\n${promptText}`;
   }
   if (isMcq && !promptText.trim()) {
-    promptText = `${chapter ? chapter + ' অধ্যায়ের' : 'নবম-দশম পদার্থবিজ্ঞানের'} ওপর ২৫টিি গুরুত্বপূর্ণ MCQ প্রশ্ন তৈরি করো (উত্তর ও ব্যাখ্যাসহ)।`;
+    promptText = `${chapter ? chapter + ' অধ্যায়ের' : 'নবম-দশম পদার্থবিজ্ঞানের'} ওপর ২৫টি গুরুত্বপূর্ণ MCQ প্রশ্ন তৈরি করো (উত্তর ও ব্যাখ্যাসহ)।`;
   }
   if (mcqMode) {
     promptText += `\n\nগুরুত্বপূর্ণ নির্দেশনা: উত্তরটি অবশ্যই {"questions": [...]} আকারের valid JSON object হিসেবে দেবে।`;
